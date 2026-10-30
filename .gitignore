@@ -1,0 +1,19 @@
+# Dados pessoais e acesso à conta Google: nunca vão para o Git
+/data/
+credentials.json
+token.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Executável
+build/
+dist/
+*.spec
+
+# Ferramentas
+.ruff_cache/
+node_modules/

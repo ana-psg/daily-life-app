@@ -1,0 +1,63 @@
+/* Cores do Daily Life. Tema claro é o padrão; [data-theme="escuro"] troca tudo. */
+:root,
+[data-theme='claro'] {
+  --bg: #f4f2fa;
+  --surface: #ffffff;
+  --surface-2: #f6f4fc;
+  --field: #f4f2fa;
+  --line: #efecf6;
+  --ink: #1c1a2e;
+  --muted: #6b6880;
+  --faint: #a8a5b8;
+  --accent: #7152f0;
+  --accent-soft: #eee9ff;
+  --accent-ink: #5b3fd9;
+  --on-accent: #ffffff;
+  --chip: rgba(255, 255, 255, 0.22);
+  --dock: #1c1a2e;
+  --dock-ink: #c9c5da;
+  --sticky: #fff4d6;
+  --sticky-ink: #5c3f00;
+  --danger: #c0362c;
+  --danger-soft: #fde7e5;
+  --now: #e5484d;
+  --today-col: #f7f4ff;
+  --check: #c9c5da;
+  --shadow: 0 1px 2px rgba(28, 26, 46, 0.04), 0 8px 24px rgba(28, 26, 46, 0.06);
+  --modal-shadow: 0 24px 60px rgba(16, 12, 40, 0.28);
+  --scrim: rgba(28, 26, 46, 0.35);
+  --tint-bg: 16%;
+  --tint-fg: 60%;
+  color-scheme: light;
+}
+
+[data-theme='escuro'] {
+  --bg: #111017;
+  --surface: #1b1924;
+  --surface-2: #24212f;
+  --field: #24212f;
+  --line: #2c2938;
+  --ink: #f2f0fa;
+  --muted: #a19eb5;
+  --faint: #6e6a82;
+  --accent: #9b82ff;
+  --accent-soft: #2a2445;
+  --accent-ink: #c9bcff;
+  --on-accent: #16121f;
+  --chip: rgba(0, 0, 0, 0.14);
+  --dock: #24212f;
+  --dock-ink: #a19eb5;
+  --sticky: #2a2416;
+  --sticky-ink: #ffd88a;
+  --danger: #ff8f85;
+  --danger-soft: rgba(255, 143, 133, 0.14);
+  --now: #ff6b81;
+  --today-col: #1f1c2b;
+  --check: #4a4660;
+  --shadow: none;
+  --modal-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  --scrim: rgba(0, 0, 0, 0.55);
+  --tint-bg: 20%;
+  --tint-fg: 45%;
+  color-scheme: dark;
+}

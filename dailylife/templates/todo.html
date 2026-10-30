@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}To-do · Daily Life{% endblock %}
+{% block body %}
+<div class="page">
+  <div class="wrap">
+    <header class="topbar">
+      <div class="titles">
+        <span class="sub" id="t-prog-txt">Hoje</span>
+        <h1>To-do</h1>
+      </div>
+      {% include "_topbar.html" %}
+    </header>
+    <div class="narrow w-full stack gap-16">
+      <div class="progress mw-260">
+        <div class="bar" role="progressbar" aria-label="Progresso de hoje" aria-valuemin="0" aria-valuemax="100" id="t-bar"><span style="width:0%"></span></div>
+      </div>
+      <div class="pills" role="tablist" aria-label="Listas" id="t-tabs">
+        <button role="tab" type="button" data-aba="hoje" aria-selected="true">Hoje</button>
+        <button role="tab" type="button" data-aba="semana" aria-selected="false">Semana</button>
+        <button role="tab" type="button" data-aba="projetos" aria-selected="false">Projetos</button>
+        <button role="tab" type="button" data-aba="feitas" aria-selected="false">Feitas</button>
+      </div>
+      <div class="add-row">
+        <label for="t-quick" class="sr-only">Nova tarefa</label>
+        <input id="t-quick" class="quick" placeholder="Nova tarefa…" autocomplete="off">
+        <button class="btn primary" type="button" id="t-add" aria-label="Adicionar tarefa">{{ icon('plus', 20) }}</button>
+      </div>
+      <p class="hint">Atalhos no texto: <b>amanhã</b> ou <b>hoje</b> para o vencimento, <b>!alta</b> ou <b>!baixa</b> para prioridade, <b>#semana</b> ou <b>#projetos</b> para a lista. Arraste os cartões para reordenar.</p>
+      <div class="stack gap-10" id="t-list"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/todo.js"></script>{% endblock %}

@@ -1,0 +1,32 @@
+[project]
+name = "dailylife"
+version = "2.0.0"
+description = "Daily Life: lembretes, to-do, compromissos e calendário num widget para Windows"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+extend-exclude = ["build", "dist", ".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF", "ANN"]
+ignore = [
+    "RUF001", "RUF002", "RUF003",  # textos em português têm acentos e travessões de propósito
+    "SIM105",                      # try/except/pass é mais claro que contextlib.suppress aqui
+    "B008",
+    "ANN401",                      # Any é aceito (serviço do Google, janelas do pywebview)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E402", "E501", "B017", "SIM117", "RUF015", "ANN"]
+"tools/*" = ["ANN"]
+"dailylife/web/*" = ["ANN201", "ANN202"]
+"dailylife/tailscale.py" = ["SIM112"]  # rotas do Flask devolvem respostas do Flask
+"dailylife/desktop/app.py" = ["E402", "SIM112", "SIM115"]  # nomes de variáveis do Windows; stdout do pythonw
+
+[tool.ruff.lint.isort]
+known-first-party = ["dailylife"]
+
+[tool.ruff.format]
+quote-style = "double"

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Daily Life{% endblock %}
+{% block body %}
+<div class="page">
+  <div class="wrap">
+    <header class="topbar">
+      <div class="titles">
+        <span class="sub" id="p-data">&nbsp;</span>
+        <h1 id="p-greeting">Olá</h1>
+      </div>
+      {% include "_topbar.html" %}
+    </header>
+
+    <div class="cols">
+      <aside class="col-side">
+        <section class="hero" id="p-proximo" aria-live="polite">
+          <div class="top"><span class="label">Próximo compromisso</span></div>
+          <span class="title">Carregando…</span>
+        </section>
+
+        <section class="card" aria-labelledby="p-todo-h">
+          <div class="card-head">
+            <h2 id="p-todo-h">To-do de hoje</h2>
+            <a class="link" href="/todo">Ver tudo</a>
+          </div>
+          <div class="progress">
+            <div class="row"><span id="p-prog-txt">0 de 0 feitas</span><span id="p-prog-pct">0%</span></div>
+            <div class="bar" role="progressbar" aria-label="Progresso do dia" aria-valuemin="0" aria-valuemax="100" id="p-prog-bar"><span style="width:0%"></span></div>
+          </div>
+          <div class="items" id="p-todos"></div>
+          <label for="p-quick" class="sr-only">Nova tarefa</label>
+          <input id="p-quick" class="quick" placeholder="+ Adicionar tarefa (Enter)" autocomplete="off">
+        </section>
+
+        <section class="sticky-card" aria-labelledby="p-rem-h">
+          <div class="card-head">
+            <h2 id="p-rem-h">Lembretes</h2>
+            <a class="link" href="/lembretes">Abrir</a>
+          </div>
+          <div class="items" id="p-rems"></div>
+        </section>
+      </aside>
+
+      <main class="col-main">
+        <section class="card" aria-labelledby="p-week-h">
+          <div class="week-head">
+            <div class="left">
+              <h2 class="fs-17 fw-800" id="p-week-h">Semana</h2>
+              <span class="muted fs-13 fw-600" id="p-week-title"></span>
+            </div>
+            <div class="right">
+              <button class="icon-btn sm" type="button" id="p-prev" aria-label="Semana anterior">{{ icon('left', 15) }}</button>
+              <button class="btn ghost sm" type="button" id="p-hoje">Hoje</button>
+              <button class="icon-btn sm" type="button" id="p-next" aria-label="Próxima semana">{{ icon('right', 15) }}</button>
+              <a class="btn ghost sm" href="/calendario">Mês</a>
+            </div>
+          </div>
+          <div id="p-detail"></div>
+          <div id="p-timeline"></div>
+          <div class="legend" id="p-legend"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/painel.js"></script>{% endblock %}

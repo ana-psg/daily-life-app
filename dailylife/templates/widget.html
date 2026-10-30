@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Daily Life · widget{% endblock %}
+{% block body %}
+<div class="widget-body">
+  <div class="whead pywebview-drag-region">
+    <div class="stack">
+      <span class="muted fs-12 fw-600" id="w-data">&nbsp;</span>
+      <span class="clock" id="w-hora">--:--</span>
+    </div>
+    <div class="wbtns">
+      <button class="icon-btn" type="button" id="btn-tema" aria-label="Alternar modo claro e escuro">
+        <span class="when-light">{{ icon('moon', 16) }}</span><span class="when-dark" hidden>{{ icon('sun', 16) }}</span>
+      </button>
+      <a class="icon-btn" href="/" id="w-expandir" aria-label="Expandir para o painel completo" title="Painel (W)">{{ icon('expand', 16) }}</a>
+      <button class="icon-btn desk-only" type="button" id="w-esconder" aria-label="Esconder (continua na bandeja)" title="Esconder" hidden>{{ icon('x', 16) }}</button>
+    </div>
+  </div>
+  <div class="wscroll">
+    <div id="w-proximo"></div>
+    <div class="wcard" id="w-depois-box">
+      <div class="card-head mb-2"><b class="fs-13">Depois hoje</b><a class="link" href="/calendario">Calendário</a></div>
+      <div id="w-depois"></div>
+    </div>
+    <div class="wcard">
+      <div class="card-head mb-2"><b class="fs-13">To-do</b><span class="muted fs-12 fw-700" id="w-prog"></span></div>
+      <div class="items" id="w-todos"></div>
+      <label for="w-quick" class="sr-only">Nova tarefa</label>
+      <input id="w-quick" class="quick h-38 mt-6" placeholder="+ Tarefa" autocomplete="off">
+    </div>
+    <div class="wsticky" id="w-rems-box">
+      <div class="card-head"><b class="fs-13">Lembretes</b><a class="link c-inherit" href="/lembretes">Abrir</a></div>
+      <div id="w-rems"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/widget.js"></script>{% endblock %}

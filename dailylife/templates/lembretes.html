@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Lembretes · Daily Life{% endblock %}
+{% block body %}
+<div class="page">
+  <div class="wrap">
+    <header class="topbar">
+      <div class="titles">
+        <span class="sub" id="l-sub">&nbsp;</span>
+        <h1>Lembretes</h1>
+      </div>
+      {% include "_topbar.html" %}
+    </header>
+    <div class="title-row between">
+      <div class="pills" role="tablist" aria-label="Filtro" id="l-filtros">
+        <button role="tab" type="button" data-f="todos" aria-selected="true">Todos</button>
+        <button role="tab" type="button" data-f="hoje" aria-selected="false">Hoje</button>
+        <button role="tab" type="button" data-f="recorrentes" aria-selected="false">Recorrentes</button>
+        <button role="tab" type="button" data-f="resolvidos" aria-selected="false">Resolvidos</button>
+      </div>
+      <button class="btn primary" type="button" id="l-novo">{{ icon('plus', 18) }}Novo lembrete</button>
+    </div>
+    <div class="rem-grid" id="l-grid"></div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/lembretes.js"></script>{% endblock %}

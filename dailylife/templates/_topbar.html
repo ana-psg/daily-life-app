@@ -1,0 +1,22 @@
+{%- from "_icons.html" import icon -%}
+{# Ações e navegação do topo. Usado por todas as telas grandes. #}
+<div class="actions">
+  <span class="pill-status" id="sync-pill" hidden><span class="dot ok"></span><span class="txt">Google sincronizado</span></span>
+  <button class="icon-btn" type="button" id="btn-tema" aria-label="Alternar modo claro e escuro (T)" title="Tema (T)">
+    <span class="when-light">{{ icon('moon') }}</span><span class="when-dark" hidden>{{ icon('sun') }}</span>
+  </button>
+  <button class="icon-btn desk-only" type="button" id="btn-widget" aria-label="Encolher para o modo widget (W)" title="Modo widget (W)" hidden>{{ icon('shrink') }}</button>
+  <nav class="dock main-nav" aria-label="Navegação">
+    <a href="/" aria-label="Painel" title="Painel" {% if page == 'painel' %}aria-current="page"{% endif %}>{{ icon('home') }}</a>
+    <a href="/calendario" aria-label="Calendário" title="Calendário" {% if page == 'calendario' %}aria-current="page"{% endif %}>{{ icon('calendar') }}</a>
+    <a href="/todo" aria-label="To-do" title="To-do" {% if page == 'todo' %}aria-current="page"{% endif %}>{{ icon('todo') }}</a>
+    <a href="/lembretes" aria-label="Lembretes" title="Lembretes" {% if page == 'lembretes' %}aria-current="page"{% endif %}>{{ icon('bell') }}</a>
+    <a href="/config" aria-label="Configurações" title="Configurações" {% if page == 'config' %}aria-current="page"{% endif %}>{{ icon('sliders') }}</a>
+    <button class="new" type="button" id="btn-novo" aria-haspopup="menu" aria-expanded="false">{{ icon('plus', 16) }}Novo</button>
+  </nav>
+</div>
+<div class="new-menu" id="new-menu" role="menu" hidden>
+  <button type="button" role="menuitem" data-novo="tarefa">{{ icon('todo') }}Tarefa <kbd>N</kbd></button>
+  <button type="button" role="menuitem" data-novo="compromisso">{{ icon('calendar') }}Compromisso <kbd>C</kbd></button>
+  <button type="button" role="menuitem" data-novo="lembrete">{{ icon('bell') }}Lembrete <kbd>L</kbd></button>
+</div>

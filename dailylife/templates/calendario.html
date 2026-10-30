@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Calendário · Daily Life{% endblock %}
+{% block body %}
+<div class="page">
+  <div class="wrap">
+    <header class="topbar">
+      <div class="title-row">
+        <h1 id="c-titulo">Calendário</h1>
+        <span class="muted fs-15 fw-600" id="c-ano"></span>
+        <button class="icon-btn sm" type="button" id="c-prev" aria-label="Anterior">{{ icon('left', 15) }}</button>
+        <button class="icon-btn sm" type="button" id="c-next" aria-label="Próximo">{{ icon('right', 15) }}</button>
+        <button class="btn ghost sm" type="button" id="c-hoje">Hoje</button>
+      </div>
+      {% include "_topbar.html" %}
+    </header>
+    <div class="hrow end">
+      <div class="seg" role="group" aria-label="Visualização" id="c-views">
+        <button type="button" data-view="dia" aria-pressed="false">Dia</button>
+        <button type="button" data-view="semana" aria-pressed="false">Semana</button>
+        <button type="button" data-view="mes" aria-pressed="true">Mês</button>
+      </div>
+    </div>
+    <div class="cols cal-cols">
+      <aside class="col-side basis-260">
+        <section class="card" aria-labelledby="c-dia-h">
+          <div class="stack gap-2">
+            <span class="fs-12 fw-700 c-accent">Dia selecionado</span>
+            <h2 class="fs-19 fw-800 tight" id="c-dia-h">&nbsp;</h2>
+          </div>
+          <div class="stack gap-8" id="c-dia-lista"></div>
+          <button class="btn ghost" type="button" id="c-add-dia">+ Adicionar neste dia</button>
+        </section>
+        <section class="card gap-2" aria-labelledby="c-cals-h">
+          <h2 class="fs-15 fw-800 mb-6" id="c-cals-h">Calendários</h2>
+          <div id="c-cals"></div>
+          <a class="link mt-6" href="/config#google">Gerenciar calendários</a>
+        </section>
+      </aside>
+      <main class="col-main basis-680">
+        <section class="card p-16" id="c-main"></section>
+      </main>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/calendario.js"></script>{% endblock %}

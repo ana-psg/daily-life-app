@@ -1,0 +1,164 @@
+{%- from "_icons.html" import icon -%}
+<!-- Compromisso -->
+<dialog class="modal" id="dlg-evento" aria-labelledby="ev-h">
+  <form method="dialog" id="form-evento" novalidate>
+    <div class="mh">
+      <h2 id="ev-h">Novo compromisso</h2>
+      <button type="button" class="icon-btn sm" data-close aria-label="Fechar">{{ icon('x', 15) }}</button>
+    </div>
+    <div class="mb">
+      <div class="banner" id="ev-ro" hidden>Este calendário do Google é só para leitura. Para mudar, use o Google Agenda.</div>
+      <div class="fl" id="ev-escopo-box" hidden>
+        <span class="lb" id="ev-escopo-lb">Este compromisso se repete. Alterar:</span>
+        <div class="seg in-card seg-2" role="radiogroup" aria-labelledby="ev-escopo-lb" id="ev-escopo">
+          <button type="button" role="radio" data-escopo="este" aria-checked="true">Só este</button>
+          <button type="button" role="radio" data-escopo="todos" aria-checked="false">Todos</button>
+        </div>
+      </div>
+      <label for="ev-titulo" class="sr-only">Título</label>
+      <input id="ev-titulo" name="titulo" class="in big" placeholder="Título do compromisso" maxlength="200" required>
+      <div class="grid2">
+        <div class="fl"><label for="ev-data">Começa</label><input id="ev-data" name="data" type="date" class="in" required></div>
+        <div class="fl tm"><label for="ev-ini">Hora de início</label><input id="ev-ini" name="ini" type="time" class="in"></div>
+        <div class="fl"><label for="ev-data-fim">Termina</label><input id="ev-data-fim" name="data_fim" type="date" class="in"></div>
+        <div class="fl tm"><label for="ev-fim">Hora de fim</label><input id="ev-fim" name="fim" type="time" class="in"></div>
+      </div>
+      <div class="grid2">
+        <label class="inline-check"><input type="checkbox" id="ev-allday" name="dia_inteiro">Dia inteiro</label>
+        <div class="fl">
+          <label for="ev-rep" class="sr-only">Repetir</label>
+          <select id="ev-rep" name="repeticao" class="in">
+            <option value="">Não repete</option><option value="diaria">Todo dia</option>
+            <option value="dias_uteis">Todo dia útil</option><option value="semanal">Toda semana</option>
+            <option value="mensal">Todo mês</option>
+          </select>
+        </div>
+      </div>
+      <div class="fl">
+        <span class="lb" id="ev-cal-lb">Calendário</span>
+        <div class="chips" id="ev-cals" role="group" aria-labelledby="ev-cal-lb"></div>
+        <span class="hint" id="ev-google-hint" hidden>Este calendário sincroniza com o Google Agenda.</span>
+      </div>
+      <div class="fl"><label for="ev-local">Local ou link</label><input id="ev-local" name="local" class="in" maxlength="300"></div>
+      <div class="fl">
+        <label for="ev-aviso">Me avisar</label>
+        <select id="ev-aviso" name="aviso_min" class="in">
+          <option value="">Sem aviso</option><option value="0">No horário</option><option value="5">5 min antes</option>
+          <option value="10">10 min antes</option><option value="15">15 min antes</option><option value="30">30 min antes</option>
+          <option value="60">1 h antes</option><option value="120">2 h antes</option><option value="1440">1 dia antes</option>
+        </select>
+      </div>
+      <div class="fl"><label for="ev-notas">Notas</label><textarea id="ev-notas" name="notas" class="in" rows="3"></textarea></div>
+      <div class="warnbox" id="ev-warn" hidden></div>
+    </div>
+    <div class="mf">
+      <button type="button" class="btn danger" id="ev-del" hidden>Excluir</button>
+      <span class="grow"></span>
+      <button type="button" class="btn ghost" data-close>Cancelar</button>
+      <button type="submit" class="btn primary">Salvar</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Lembrete -->
+<dialog class="modal" id="dlg-lembrete" aria-labelledby="rm-h">
+  <form method="dialog" id="form-lembrete" novalidate>
+    <div class="mh">
+      <h2 id="rm-h">Novo lembrete</h2>
+      <button type="button" class="icon-btn sm" data-close aria-label="Fechar">{{ icon('x', 15) }}</button>
+    </div>
+    <div class="mb">
+      <label for="rm-titulo" class="sr-only">Título</label>
+      <input id="rm-titulo" name="titulo" class="in big" placeholder="Do que você quer lembrar?" maxlength="200" required>
+      <div class="fl"><label for="rm-desc">Detalhes</label><textarea id="rm-desc" name="descricao" class="in" rows="2"></textarea></div>
+      <div class="grid2">
+        <div class="fl"><label for="rm-data">Data</label><input id="rm-data" name="data" type="date" class="in" required></div>
+        <div class="fl"><label for="rm-hora">Hora</label><input id="rm-hora" name="hora" type="time" class="in" required></div>
+      </div>
+      <div class="fl">
+        <label for="rm-rep">Repetir</label>
+        <select id="rm-rep" name="rep" class="in">
+          <option value="">Não repete</option><option value="diaria">Todo dia</option>
+          <option value="horas">A cada algumas horas</option><option value="dias">Em dias da semana</option>
+          <option value="mensal">Todo mês</option>
+        </select>
+      </div>
+      <div class="fl" id="rm-horas-box" hidden>
+        <label for="rm-horas">A cada quantas horas</label>
+        <input id="rm-horas" name="horas" type="number" min="1" max="23" value="2" class="in">
+      </div>
+      <div class="fl" id="rm-dias-box" hidden>
+        <span class="lb" id="rm-dias-lb">Dias</span>
+        <div class="chips" id="rm-dias" role="group" aria-labelledby="rm-dias-lb">
+          <button type="button" data-d="0">Seg</button><button type="button" data-d="1">Ter</button>
+          <button type="button" data-d="2">Qua</button><button type="button" data-d="3">Qui</button>
+          <button type="button" data-d="4">Sex</button><button type="button" data-d="5">Sáb</button>
+          <button type="button" data-d="6">Dom</button>
+        </div>
+      </div>
+      <p class="hint" id="rm-rec-hint" hidden>Ao marcar como feito, ele conta como concluído hoje e volta na próxima vez.</p>
+      <div class="fl">
+        <span class="lb" id="rm-cor-lb">Cor</span>
+        <div class="chips" id="rm-cores" role="group" aria-labelledby="rm-cor-lb">
+          <button type="button" data-cor="amarelo" style="--c:#F2B33D"><span class="dot"></span>Amarelo</button>
+          <button type="button" data-cor="rosa" style="--c:#E85A93"><span class="dot"></span>Rosa</button>
+          <button type="button" data-cor="azul" style="--c:#5B7FFF"><span class="dot"></span>Azul</button>
+          <button type="button" data-cor="verde" style="--c:#36B072"><span class="dot"></span>Verde</button>
+          <button type="button" data-cor="lilas" style="--c:#7152F0"><span class="dot"></span>Lilás</button>
+        </div>
+      </div>
+    </div>
+    <div class="mf">
+      <button type="button" class="btn danger" id="rm-del" hidden>Excluir</button>
+      <span class="grow"></span>
+      <button type="button" class="btn ghost" data-close>Cancelar</button>
+      <button type="submit" class="btn primary">Salvar</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Tarefa -->
+<dialog class="modal" id="dlg-tarefa" aria-labelledby="td-h">
+  <form method="dialog" id="form-tarefa" novalidate>
+    <div class="mh">
+      <h2 id="td-h">Nova tarefa</h2>
+      <button type="button" class="icon-btn sm" data-close aria-label="Fechar">{{ icon('x', 15) }}</button>
+    </div>
+    <div class="mb">
+      <label for="td-titulo" class="sr-only">Título</label>
+      <input id="td-titulo" name="titulo" class="in big" placeholder="O que precisa ser feito?" maxlength="300" required>
+      <div class="grid2">
+        <div class="fl">
+          <label for="td-lista">Lista</label>
+          <select id="td-lista" name="lista" class="in">
+            <option value="hoje">Hoje</option><option value="semana">Semana</option><option value="projetos">Projetos</option>
+          </select>
+        </div>
+        <div class="fl"><label for="td-venc">Vencimento</label><input id="td-venc" name="vencimento" type="date" class="in"></div>
+      </div>
+      <div class="fl">
+        <span class="lb" id="td-pr-lb">Prioridade</span>
+        <div class="chips" id="td-prio" role="group" aria-labelledby="td-pr-lb">
+          <button type="button" data-p="alta" style="--c:#E5484D"><span class="dot"></span>Alta</button>
+          <button type="button" data-p="media" style="--c:#F2A93B"><span class="dot"></span>Média</button>
+          <button type="button" data-p="baixa" style="--c:#8A879C"><span class="dot"></span>Baixa</button>
+        </div>
+      </div>
+      <div class="fl"><label for="td-notas">Notas</label><textarea id="td-notas" name="notas" class="in" rows="2"></textarea></div>
+      <div class="fl" id="td-subs-box">
+        <span class="lb">Subtarefas</span>
+        <div id="td-subs" class="items"></div>
+        <div class="sub-edit">
+          <label for="td-sub-new" class="sr-only">Nova subtarefa</label>
+          <input id="td-sub-new" class="in" placeholder="+ Adicionar subtarefa e Enter">
+        </div>
+      </div>
+    </div>
+    <div class="mf">
+      <button type="button" class="btn danger" id="td-del" hidden>Excluir</button>
+      <span class="grow"></span>
+      <button type="button" class="btn ghost" data-close>Cancelar</button>
+      <button type="submit" class="btn primary">Salvar</button>
+    </div>
+  </form>
+</dialog>

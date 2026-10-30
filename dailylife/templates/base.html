@@ -1,0 +1,34 @@
+{%- from "_icons.html" import icon, sprite -%}
+<!doctype html>
+<html lang="pt-BR" data-theme="claro" data-tema="{{ tema or 'claro' }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{% block title %}Daily Life{% endblock %}</title>
+<meta name="theme-color" content="#7152F0">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/static/img/icon-192.png">
+<link rel="apple-touch-icon" href="/static/img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/tokens.css">
+<link rel="stylesheet" href="/static/css/app.css">
+<script>
+  (function () {
+    var t = document.documentElement.dataset.tema;
+    if (t === 'sistema') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'claro';
+    document.documentElement.dataset.theme = t === 'escuro' ? 'escuro' : 'claro';
+  })();
+</script>
+</head>
+<body data-page="{{ page }}" data-local="{{ 1 if local else 0 }}" data-agora="{{ agora }}">
+{{ sprite() }}
+{% block body %}{% endblock %}
+{% include "_modals.html" %}
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script src="/static/js/api.js"></script>
+<script src="/static/js/timeline.js"></script>
+<script src="/static/js/modals.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

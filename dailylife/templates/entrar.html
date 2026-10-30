@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="{{ 'escuro' if tema == 'escuro' else 'claro' }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrar · Daily Life</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/static/img/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/tokens.css">
+<link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+<main class="login">
+  <form method="post">
+    <img class="r-16" src="/static/img/icon-192.png" alt="" width="56" height="56">
+    <h1 class="fs-24 fw-800">Daily Life</h1>
+    <label for="senha" class="muted fs-13 fw-700">Digite sua senha</label>
+    <input id="senha" name="senha" class="in secret" type="password" autocomplete="current-password" maxlength="64" autofocus required>
+    {% if erro %}<div class="warnbox" role="alert">{{ erro }}</div>{% endif %}
+    <button class="btn primary" type="submit">Entrar</button>
+  </form>
+</main>
+</body>
+</html>

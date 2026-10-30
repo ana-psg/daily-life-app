@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Configurações · Daily Life{% endblock %}
+{% block body %}
+<div class="page">
+  <div class="wrap">
+    <header class="topbar">
+      <div class="titles"><span class="sub">Daily Life</span><h1>Configurações</h1></div>
+      {% include "_topbar.html" %}
+    </header>
+    <div class="narrow w-full stack gap-16">
+
+      <section class="set-section" aria-labelledby="s-ap">
+        <h2 id="s-ap">Aparência</h2>
+        <div class="seg in-card seg-3" role="radiogroup" aria-label="Tema" id="s-tema">
+          <button type="button" role="radio" data-tema="claro" aria-checked="false">Claro</button>
+          <button type="button" role="radio" data-tema="escuro" aria-checked="false">Escuro</button>
+          <button type="button" role="radio" data-tema="sistema" aria-checked="false">Sistema</button>
+        </div>
+        <div class="set-row">
+          <label class="lbl" for="s-nome"><b>Seu nome</b><small>Usado na saudação do painel</small></label>
+          <input id="s-nome" class="field w-160" maxlength="40">
+        </div>
+      </section>
+
+      <section class="set-section desk-only" aria-labelledby="s-pc" id="s-pc-box">
+        <h2 id="s-pc">Ao ligar o PC</h2>
+        <div class="set-row">
+          <div class="lbl"><b>Abrir junto com o Windows</b><small id="s-boot-help">Abre sozinho ao ligar o PC</small></div>
+          <button type="button" class="switch" role="switch" aria-checked="false" data-key="abrir_com_windows" aria-label="Abrir junto com o Windows"></button>
+        </div>
+        <div class="set-row">
+          <div class="lbl"><b>Widget sempre por cima</b><small>Fica fixo como nota adesiva</small></div>
+          <button type="button" class="switch" role="switch" aria-checked="false" data-key="sempre_por_cima" aria-label="Widget sempre por cima"></button>
+        </div>
+        <div class="set-row">
+          <label class="lbl" for="s-modo"><b>Abrir como</b><small>O que aparece ao ligar o PC</small></label>
+          <select id="s-modo" class="field"><option value="painel">Painel completo</option><option value="widget">Widget compacto</option></select>
+        </div>
+        <div class="set-row" id="s-sair-row" hidden>
+          <div class="lbl"><b>Encerrar o app</b><small>Fecha de vez; os avisos param até abrir de novo</small></div>
+          <button type="button" class="btn ghost sm" id="s-sair">Encerrar</button>
+        </div>
+      </section>
+
+      <section class="set-section" aria-labelledby="s-av">
+        <h2 id="s-av">Avisos</h2>
+        <div class="set-row">
+          <div class="lbl"><b>Avisos de lembretes e compromissos</b><small>Notificação do Windows</small></div>
+          <button type="button" class="switch" role="switch" aria-checked="false" data-key="notificacoes" aria-label="Avisos"></button>
+        </div>
+        <div class="set-row">
+          <div class="lbl"><b>Som</b><small>Toca o som padrão do Windows</small></div>
+          <button type="button" class="switch" role="switch" aria-checked="false" data-key="som" aria-label="Som dos avisos"></button>
+        </div>
+        <div class="set-row">
+          <div class="lbl"><b>Não perturbe</b><small>Sem avisos nesse horário</small></div>
+          <button type="button" class="switch" role="switch" aria-checked="false" data-key="nao_perturbe" aria-label="Não perturbe"></button>
+        </div>
+        <div class="set-row" id="s-np-horas">
+          <div class="lbl"><b>Horário</b></div>
+          <div class="hrow center">
+            <label class="sr-only" for="s-np-ini">Início</label><input id="s-np-ini" type="time" class="field">
+            <span class="muted">às</span>
+            <label class="sr-only" for="s-np-fim">Fim</label><input id="s-np-fim" type="time" class="field">
+          </div>
+        </div>
+      </section>
+
+      <section class="set-section" aria-labelledby="google" id="google">
+        <h2>Google Agenda</h2>
+        <div id="g-status"></div>
+        <div class="set-row">
+          <label class="lbl" for="s-sync"><b>Sincronizar a cada</b></label>
+          <select id="s-sync" class="field"><option value="5">5 min</option><option value="15">15 min</option><option value="60">1 hora</option></select>
+        </div>
+        <h2 class="mt-6">Calendários</h2>
+        <p class="note">Toque no olho para mostrar ou esconder. Calendários locais ficam só neste PC.</p>
+        <div id="s-cals"></div>
+        <div class="add-row mt-4">
+          <label for="s-cal-nome" class="sr-only">Novo calendário local</label>
+          <input id="s-cal-nome" class="field flex-1" placeholder="Novo calendário local">
+          <label for="s-cal-cor" class="sr-only">Cor</label>
+          <input class="color-input" id="s-cal-cor" type="color" value="#7152F0">
+          <button class="btn soft sm" type="button" id="s-cal-add">Adicionar</button>
+        </div>
+      </section>
+
+      <section class="set-section" aria-labelledby="s-cel">
+        <h2 id="s-cel">Usar no celular</h2>
+        <p class="note">Pelo Tailscale, uma rede privada só entre os seus aparelhos: funciona no 4G e no Wi-Fi de qualquer lugar, e os dados continuam neste PC. O PC precisa estar ligado.</p>
+        <div class="set-row desk-only">
+          <div class="lbl"><b>Senha de acesso</b><small id="s-senha-status">Pedida ao abrir no celular</small></div>
+          <div class="hrow">
+            <label for="s-senha" class="sr-only">Nova senha</label>
+            <input id="s-senha" class="field w-160" type="password" maxlength="64" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+            <button class="btn soft sm" type="button" id="s-senha-save">Salvar</button>
+          </div>
+        </div>
+        <div id="s-tailscale" class="desk-only stack gap-10" aria-live="polite"></div>
+        <div class="set-row" id="s-push-row" hidden>
+          <div class="lbl"><b>Avisos neste celular</b><small id="s-push-status">Lembretes e compromissos como notificação</small></div>
+          <div class="hrow">
+            <button class="btn soft sm" type="button" id="s-push-test" hidden>Testar</button>
+            <button class="btn primary sm" type="button" id="s-push">Receber avisos</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="set-section" aria-labelledby="s-dados">
+        <h2 id="s-dados">Dados</h2>
+        <p class="note">Um backup automático é feito todo dia em <code>data/backups</code> (ficam os últimos 14).</p>
+        <div class="hrow wrap-row">
+          <button class="btn soft sm" type="button" id="s-backup">Fazer backup agora</button>
+          <a class="btn ghost sm" href="/api/exportar" download>Exportar (JSON)</a>
+          <label class="btn ghost sm desk-only pointer">Importar…<input type="file" accept="application/json,.json" id="s-import" class="sr-only"></label>
+        </div>
+        <div id="s-backups" class="note"></div>
+      </section>
+
+      <section class="set-section" aria-labelledby="s-keys">
+        <h2 id="s-keys">Atalhos de teclado</h2>
+        <div class="keys">
+          <kbd>N</kbd><span>Nova tarefa</span>
+          <kbd>C</kbd><span>Novo compromisso</span>
+          <kbd>L</kbd><span>Novo lembrete</span>
+          <kbd>W</kbd><span>Alternar painel e widget</span>
+          <kbd>T</kbd><span>Alternar tema claro e escuro</span>
+          <kbd>1</kbd><span>Painel · <kbd>2</kbd> Calendário · <kbd>3</kbd> To-do · <kbd>4</kbd> Lembretes</span>
+          <kbd>Esc</kbd><span>Fechar janela de edição</span>
+        </div>
+      </section>
+      {% if not local %}<a class="btn ghost" href="/sair">Sair deste aparelho</a>{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/config.js"></script>{% endblock %}
