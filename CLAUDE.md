@@ -17,6 +17,12 @@ Flask + pywebview + SQLite.
 - Visual: cores em static/css/tokens.css (tema claro e [data-theme="escuro"]),
   fonte Plus Jakarta Sans, cantos de 14 a 30 px, sem bordas pesadas, barra de navegação escura em pílula.
 - Toda cor nova entra como token nos DOIS temas. Cores de calendário usam --c + color-mix (classe .ev).
+- tokens.css também tem as escalas (--space-*, --radius-*, --text-*) e --hour (altura de uma hora na linha
+  do tempo, lida pelo timeline.js). Cantos de 14 a 30 px nos cartões; itens dentro de um cartão (menu,
+  chips, células) usam --radius-sm (12 px) para ficarem concêntricos.
+- Nada de style="" gerado no JS também: use as classes utilitárias de responsivo.css (exceto --c, --n e
+  posições calculadas como top/left).
+- Nenhuma tela pode rolar para o lado entre 390 px e 1280 px (o e2e_telas.py confere em 900 px).
 - Nada de style="" nos templates (exceto --c e larguras de barra de progresso); use as classes de static/css.
 - Ícones só em templates/_icons.html: Jinja usa icon('nome'), o JS usa DA.icon('nome', tamanho).
 - Banco: SCHEMA em db.py é o formato atual (bancos novos). Para mudar: altere SCHEMA E acrescente uma função

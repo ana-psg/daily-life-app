@@ -43,7 +43,7 @@
       filtro === 'resolvidos' ? `${r.itens.length} resolvidos` : `${abertos} em aberto`;
     $('#l-grid').innerHTML = r.itens.length
       ? r.itens.map(card).join('')
-      : '<p class="empty" style="grid-column:1/-1;text-align:center;padding:24px">Nenhum lembrete aqui.</p>';
+      : '<p class="empty full">Nenhum lembrete aqui.</p>';
   }
 
   $('#l-filtros').addEventListener('click', (e) => {

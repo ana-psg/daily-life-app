@@ -32,8 +32,8 @@
           (s) => `
         <div class="item sub${s.feito ? ' done' : ''}" data-id="${s.id}">
           <button type="button" class="check" aria-pressed="${s.feito}" aria-label="Marcar subtarefa: ${esc(s.titulo)}" ${editing ? '' : 'disabled'}>${icon('check', 10)}</button>
-          <span style="flex:1">${esc(s.titulo)}</span>
-          <button type="button" class="round plain" style="width:30px;height:30px" aria-label="Remover subtarefa" data-rm>${icon('x', 12)}</button>
+          <span class="flex-1">${esc(s.titulo)}</span>
+          <button type="button" class="round plain size-30" aria-label="Remover subtarefa" data-rm>${icon('x', 12)}</button>
         </div>`,
         )
         .join('');

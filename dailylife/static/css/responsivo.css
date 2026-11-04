@@ -134,6 +134,9 @@ select.in:disabled {
 .gap-2 {
   gap: 2px;
 }
+.gap-4 {
+  gap: 4px;
+}
 .gap-8 {
   gap: 8px;
 }
@@ -217,6 +220,70 @@ select.in:disabled {
 }
 .pointer {
   cursor: pointer;
+}
+.mt-12 {
+  margin-top: 12px;
+}
+.self-start {
+  align-self: flex-start;
+}
+.min-w-0 {
+  min-width: 0;
+}
+.fs-11 {
+  font-size: 11px;
+}
+.fs-18 {
+  font-size: 18px;
+}
+.op-70 {
+  opacity: 0.7;
+}
+.size-30 {
+  width: 30px;
+  height: 30px;
+}
+.dot.lg {
+  width: 14px;
+  height: 14px;
+  margin: 0 9px;
+}
+.empty.full {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 24px;
+}
+.empty.center-pad {
+  text-align: center;
+  padding: 24px;
+}
+.check.s24 {
+  width: 24px;
+  height: 24px;
+}
+.check.s20 {
+  width: 20px;
+  height: 20px;
+}
+.check.s18 {
+  width: 18px;
+  height: 18px;
+}
+.check.on-sticky {
+  border-color: var(--sticky-ink);
+}
+.bare {
+  background: none;
+  border: none;
+  color: inherit;
+  text-align: left;
+  padding: 0;
+}
+.op-85 {
+  opacity: 0.85;
+}
+.min-h-38 {
+  min-height: 38px;
 }
 .color-input {
   width: 40px;

@@ -38,7 +38,7 @@
     });
     const box = $('#t-list');
     if (!itens.length) {
-      box.innerHTML = `<p class="empty" style="text-align:center;padding:24px">${aba === 'feitas' ? 'Nenhuma tarefa concluída ainda.' : 'Nada por aqui. Adicione uma tarefa acima.'}</p>`;
+      box.innerHTML = `<p class="empty center-pad">${aba === 'feitas' ? 'Nenhuma tarefa concluída ainda.' : 'Nada por aqui. Adicione uma tarefa acima.'}</p>`;
       return;
     }
     box.innerHTML = itens
@@ -46,7 +46,7 @@
         (t) => `
       <div class="todo-card${t.feito ? ' done' : ''}" data-id="${t.id}" draggable="${aba !== 'feitas'}">
         <div class="row1">
-          <button type="button" class="check" style="width:24px;height:24px" data-toggle="${t.id}" aria-pressed="${t.feito}" aria-label="Marcar: ${esc(t.titulo)}">${icon('check', 12)}</button>
+          <button type="button" class="check s24" data-toggle="${t.id}" aria-pressed="${t.feito}" aria-label="Marcar: ${esc(t.titulo)}">${icon('check', 12)}</button>
           <button type="button" class="body" data-open="${t.id}">
             <span class="t">${esc(t.titulo)}</span>
             <span class="m${t.atrasada ? ' late' : ''}">${t.atrasada ? 'Atrasada · ' : ''}${esc(meta(t))}</span>

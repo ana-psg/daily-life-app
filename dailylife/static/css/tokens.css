@@ -1,4 +1,26 @@
 /* Cores do Daily Life. Tema claro é o padrão; [data-theme="escuro"] troca tudo. */
+
+/* Escalas que não mudam com o tema: use estas em vez de números soltos. */
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-sm: 12px; /* itens dentro de um cartão (menu, chips, células) */
+  --radius: 18px;
+  --radius-lg: 26px; /* cartões */
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-md: 14px;
+  --text-lg: 16px;
+  --text-xl: 22px;
+  --text-2xl: 30px;
+  --hour: 44px; /* altura de uma hora na linha do tempo (timeline.js lê este valor) */
+}
+
 :root,
 [data-theme='claro'] {
   --bg: #f4f2fa;
@@ -23,6 +45,15 @@
   --now: #e5484d;
   --today-col: #f7f4ff;
   --check: #c9c5da;
+  --ok: #36b072;
+  --warn: #f2a93b;
+  --prio-alta: #e5484d;
+  --on-danger: #ffffff;
+  --dock-hover: #ffffff;
+  --dock-new: #ffffff;
+  --dock-new-ink: #1c1a2e;
+  --toast-ink: #ffffff;
+  --knob: #ffffff;
   --shadow: 0 1px 2px rgba(28, 26, 46, 0.04), 0 8px 24px rgba(28, 26, 46, 0.06);
   --modal-shadow: 0 24px 60px rgba(16, 12, 40, 0.28);
   --scrim: rgba(28, 26, 46, 0.35);
@@ -54,6 +85,15 @@
   --now: #ff6b81;
   --today-col: #1f1c2b;
   --check: #4a4660;
+  --ok: #4cc38a;
+  --warn: #f5b452;
+  --prio-alta: #ff6b81;
+  --on-danger: #2a0b08;
+  --dock-hover: #ffffff;
+  --dock-new: #ffffff;
+  --dock-new-ink: #1c1a2e;
+  --toast-ink: #f2f0fa;
+  --knob: #ffffff;
   --shadow: none;
   --modal-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
   --scrim: rgba(0, 0, 0, 0.55);

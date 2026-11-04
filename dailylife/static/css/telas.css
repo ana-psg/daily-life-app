@@ -1,6 +1,6 @@
 /* ---------- mês ---------- */
 .month-wrap {
-  min-width: 640px;
+  min-width: min(640px, 100%);
 }
 .month-head {
   display: grid;
@@ -221,7 +221,7 @@
   gap: 14px;
 }
 .rem {
-  --c: #f2b33d;
+  --c: var(--warn);
   background: var(--surface);
   border-radius: 22px;
   padding: 16px;
@@ -380,7 +380,7 @@
   width: 22px;
   height: 22px;
   border-radius: 999px;
-  background: #fff;
+  background: var(--knob);
   transition: left 0.15s;
 }
 .switch[aria-checked='true'] {

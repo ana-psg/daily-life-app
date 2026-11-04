@@ -16,8 +16,8 @@
     if (!p) {
       el.className = 'hero empty-hero';
       el.innerHTML = `<div class="top"><span class="label">Próximo compromisso</span></div>
-        <span class="title" style="font-size:18px">Nada marcado nos próximos 7 dias</span>
-        <button type="button" class="btn soft sm" style="align-self:flex-start" id="p-hero-add">+ Compromisso</button>`;
+        <span class="title fs-18">Nada marcado nos próximos 7 dias</span>
+        <button type="button" class="btn soft sm self-start" id="p-hero-add">+ Compromisso</button>`;
       $('#p-hero-add').onclick = () => DA.openEvento({});
       return;
     }
@@ -30,7 +30,7 @@
         ? ''
         : `${DA.DIAS[DA.weekday(parse(p.inicio))]}, ${parse(p.inicio).getDate()}/${DA.pad(parse(p.inicio).getMonth() + 1)} · `;
     el.innerHTML = `<div class="top"><span class="label">Próximo compromisso</span><span class="badge">${esc(p.em)}</span></div>
-      <div style="display:flex;flex-direction:column;gap:4px">
+      <div class="stack gap-4">
         <span class="title">${esc(p.titulo)}</span>
         <span class="when">${dia}${esc(p.horario)}${p.local && !isUrl(p.local) ? ' · ' + esc(p.local) : ''}</span>
       </div>${link}`;
@@ -66,7 +66,7 @@
     const box = $('#p-rems');
     $('#p-rem-h').textContent = `Lembretes · ${list.filter((r) => r.estado !== 'feito').length}`;
     if (!list.length) {
-      box.innerHTML = '<p class="empty" style="color:inherit;opacity:.7">Nada para lembrar hoje.</p>';
+      box.innerHTML = '<p class="empty c-inherit op-70">Nada para lembrar hoje.</p>';
       return;
     }
     box.innerHTML = list
@@ -74,7 +74,7 @@
         const done = r.estado === 'feito';
         return `<div class="item${done ? ' done' : ''}">
         <button type="button" class="check" data-rem="${r.id}" data-done="${done}" aria-pressed="${done}" aria-label="Marcar lembrete: ${esc(r.titulo)}">${icon('check', 12)}</button>
-        <button type="button" class="txt" style="font-weight:700" data-open-rem="${r.id}">${esc(r.titulo)}</button>
+        <button type="button" class="txt fw-700" data-open-rem="${r.id}">${esc(r.titulo)}</button>
         <span class="tag${r.atrasado ? ' late' : ''}">${r.recorrente && done ? 'volta ' + esc(r.volta) : esc(r.hora)}</span>
       </div>`;
       })
@@ -92,11 +92,11 @@
     const when = ev.dia_inteiro ? 'Dia inteiro' : `${ev.inicio.slice(11, 16)} – ${ev.fim.slice(11, 16)}`;
     box.innerHTML = `<div class="detail">
       <div class="info"><span class="dot" style="--c:${esc(ev.cor)}"></span>
-        <div style="display:flex;flex-direction:column;min-width:0">
+        <div class="stack min-w-0">
           <span class="t">${esc(ev.titulo)}</span>
           <span class="s">${DA.DIAS[DA.weekday(s)]}, ${s.getDate()}/${DA.pad(s.getMonth() + 1)} · ${when}${ev.local ? ' · ' + esc(ev.local) : ''} · ${esc(ev.calendario)}${ev.google ? ' (Google)' : ''}</span>
         </div></div>
-      <div style="display:flex;gap:8px">
+      <div class="hrow">
         ${isUrl(ev.local) ? `<a class="btn ghost sm" href="${esc(href(ev.local))}" target="_blank" rel="noopener">Abrir link</a>` : ''}
         <button type="button" class="btn soft sm" id="p-edit">${ev.somente_leitura ? 'Ver' : 'Editar'}</button>
       </div></div>`;

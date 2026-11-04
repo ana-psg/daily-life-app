@@ -122,7 +122,7 @@ body[data-local='0'] .desk-only {
   align-items: flex-start;
 }
 .col-side {
-  flex: 1 1 320px;
+  flex: 1 1 360px;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -268,10 +268,10 @@ body[data-local='0'] .desk-only {
   flex: none;
 }
 .dot.ok {
-  background: #36b072;
+  background: var(--ok);
 }
 .dot.warn {
-  background: #f2a93b;
+  background: var(--warn);
 }
 .dot.off {
   background: var(--check);
@@ -303,7 +303,7 @@ body[data-local='0'] .desk-only {
   color: var(--on-accent);
 }
 .dock a:not([aria-current]):hover {
-  color: #fff;
+  color: var(--dock-hover);
 }
 .dock .new {
   display: inline-flex;
@@ -312,8 +312,8 @@ body[data-local='0'] .desk-only {
   height: 40px;
   padding: 0 16px 0 12px;
   border-radius: 999px;
-  background: #ffffff;
-  color: #1c1a2e;
+  background: var(--dock-new);
+  color: var(--dock-new-ink);
   font-size: 13px;
   font-weight: 800;
   border: none;

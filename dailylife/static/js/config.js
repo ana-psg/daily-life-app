@@ -61,7 +61,7 @@
     } else {
       html = `<div class="set-row"><div class="lbl"><b>${esc(g.conta || 'Conta conectada')}</b>
           <small>${g.sincronizando ? 'Sincronizando…' : g.ultima_sync ? 'Sincronizado às ' + hm(g.ultima_sync) : 'Ainda não sincronizado'}${g.pendentes ? ` · ${g.pendentes} alteração(ões) para enviar` : ''}</small></div>
-        <div style="display:flex;gap:8px"><button class="btn soft sm" type="button" id="g-sync">Sincronizar agora</button>
+        <div class="hrow"><button class="btn soft sm" type="button" id="g-sync">Sincronizar agora</button>
         <button class="btn ghost sm" type="button" id="g-off">Desconectar</button></div></div>`;
       if (g.sincronizando) gPoll = setTimeout(() => google().catch(() => {}), 2000);
     }
@@ -116,10 +116,10 @@
         ${
           c.origem === 'local'
             ? `<label class="sr-only" for="cc-${c.id}">Cor de ${esc(c.nome)}</label><input type="color" id="cc-${c.id}" value="${esc(c.cor)}" data-color>`
-            : `<span class="dot" style="--c:${esc(c.cor)};width:14px;height:14px;margin:0 9px"></span>`
+            : `<span class="dot lg" style="--c:${esc(c.cor)}"></span>`
         }
         <span class="nm" title="${esc(c.nome)}">${esc(c.nome)}</span>
-        <span class="muted" style="font-size:11px;font-weight:700">${c.origem === 'google' ? (c.somente_leitura ? 'Google · leitura' : 'Google') : 'Local'}</span>
+        <span class="muted fs-11 fw-700">${c.origem === 'google' ? (c.somente_leitura ? 'Google · leitura' : 'Google') : 'Local'}</span>
         <button type="button" class="round plain" data-vis="${c.visivel}" aria-label="${c.visivel ? 'Esconder' : 'Mostrar'} ${esc(c.nome)}" title="${c.visivel ? 'Esconder' : 'Mostrar'}">${c.visivel ? icon('eye', 16) : icon('eye-off', 16)}</button>
         ${c.origem === 'local' ? `<button type="button" class="round plain" data-del aria-label="Apagar ${esc(c.nome)}" title="Apagar">${icon('trash', 15)}</button>` : ''}
       </div>`,

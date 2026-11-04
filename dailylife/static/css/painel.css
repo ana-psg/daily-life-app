@@ -152,10 +152,10 @@
   flex: none;
 }
 .prio.alta {
-  background: #e5484d;
+  background: var(--prio-alta);
 }
 .prio.media {
-  background: #f2a93b;
+  background: var(--warn);
 }
 .prio.baixa {
   background: var(--check);
@@ -233,7 +233,7 @@
   overflow-x: auto;
 }
 .tl {
-  min-width: 680px;
+  min-width: min(680px, 100%);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -288,7 +288,7 @@
 }
 .tl-hours span {
   flex: none;
-  height: 44px;
+  height: var(--hour);
   font-size: 11px;
   font-weight: 600;
   color: var(--muted);
@@ -299,14 +299,14 @@
 }
 .tl-col {
   position: relative;
-  height: 1056px;
+  height: calc(24 * var(--hour));
   border-radius: 14px;
   background-image: repeating-linear-gradient(
     to bottom,
     var(--line) 0,
     var(--line) 1px,
     transparent 1px,
-    transparent 44px
+    transparent var(--hour)
   );
   cursor: copy;
 }
@@ -314,7 +314,7 @@
   background-color: var(--today-col);
 }
 .ev {
-  --c: #7152f0;
+  --c: var(--accent);
   background: color-mix(in srgb, var(--c) var(--tint-bg), var(--surface));
   color: color-mix(in srgb, var(--c) var(--tint-fg), var(--ink));
   border: none;

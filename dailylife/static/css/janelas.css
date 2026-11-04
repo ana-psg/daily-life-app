@@ -153,7 +153,7 @@ textarea.in {
 }
 .toast {
   background: var(--dock);
-  color: #fff;
+  color: var(--toast-ink);
   border-radius: 18px;
   padding: 14px 16px;
   box-shadow: var(--modal-shadow);
@@ -181,7 +181,7 @@ textarea.in {
 }
 .toast.err {
   background: var(--danger);
-  color: #fff;
+  color: var(--on-danger);
 }
 @keyframes up {
   from {

@@ -153,6 +153,24 @@ def main():
                 )
                 c2.close()
         settings.set("tema", "claro")
+        # Janela estreita (entre o celular e o tamanho padrão): nada pode rolar para o lado
+        t = b.new_context(viewport={"width": 900, "height": 800})
+        tp = t.new_page()
+        tp.route("**/fonts.googleapis.com/**", lambda r: r.abort())
+        tp.on("pageerror", lambda e: errors.append("janela estreita: " + str(e)))
+        for path, name in (
+            ("/", "painel"),
+            ("/calendario", "calendario"),
+            ("/todo", "todo"),
+            ("/entrar", "entrar"),
+        ):
+            tp.goto(B + path)
+            tp.wait_for_timeout(700)
+            largura = tp.evaluate("document.documentElement.scrollWidth")
+            if largura > 900:
+                errors.append(f"janela estreita: {path} rola para o lado ({largura}px)")
+            tp.screenshot(path=os.path.join(OUT, f"estreita-{name}.png"), full_page=True)
+        t.close()
         m = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
         mp = m.new_page()
         mp.route("**/fonts.googleapis.com/**", lambda r: r.abort())
