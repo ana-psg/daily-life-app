@@ -4,6 +4,11 @@ App de produtividade para Windows. Abre junto com o PC e junta **to-do, lembrete
 
 Feito com Python: Flask (telas e API) + pywebview (janela) + SQLite (dados no seu PC).
 
+<p>
+  <img src="docs/painel-claro.png" alt="Painel do Daily Life com próximo compromisso, to-do, lembretes e a semana (dados de exemplo)" width="640">
+  <img src="docs/widget-escuro.png" alt="Modo widget no tema escuro (dados de exemplo)" width="190">
+</p>
+
 ---
 
 ## 1. Instalar
