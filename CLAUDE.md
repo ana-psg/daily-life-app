@@ -4,10 +4,11 @@ App desktop (Windows): to-do, lembretes, compromissos e calendário, com modo wi
 Flask + pywebview + SQLite.
 
 ## Estrutura
-- `main.py` abre o app. Pacote `dailylife/`: `core/` (regras), `web/` (app.py telas e segurança, api.py
-  Blueprint /api, net.py), `desktop/` (janelas, bandeja, agendador, avisos, registro), `sync/google.py`,
-  `db.py` (schema e migrações), `config.py`.
-- `tests/` (unittest + e2e_telas.py com Playwright) e `tools/` (seed, diagnóstico, ícones).
+- `main.py` abre o app. Pacote `dailylife/`: `core/` (regras), `web/` (app.py, security.py, pages.py, api.py
+  Blueprint /api, net.py), `desktop/` (app.py, windows.py, tray.py, scheduler.py, notifier.py, startup.py),
+  `sync/` (google.py login e rodada, pull.py, push.py, convert.py, common.py), `db.py` (schema e migrações),
+  `config.py`.
+- `tests/` (pytest, com os testes antigos em unittest + e2e_telas.py com Playwright) e `tools/` (seed, diagnóstico, ícones).
 
 ## Regras
 - Idioma: código (funções, variáveis, módulos) em inglês; dados e textos em português (colunas do banco,
@@ -16,7 +17,7 @@ Flask + pywebview + SQLite.
 - Visual: cores em static/css/tokens.css (tema claro e [data-theme="escuro"]),
   fonte Plus Jakarta Sans, cantos de 14 a 30 px, sem bordas pesadas, barra de navegação escura em pílula.
 - Toda cor nova entra como token nos DOIS temas. Cores de calendário usam --c + color-mix (classe .ev).
-- Nada de style="" nos templates (exceto --c e larguras de barra de progresso); use as classes de app.css.
+- Nada de style="" nos templates (exceto --c e larguras de barra de progresso); use as classes de static/css.
 - Ícones só em templates/_icons.html: Jinja usa icon('nome'), o JS usa DA.icon('nome', tamanho).
 - Banco: SCHEMA em db.py é o formato atual (bancos novos). Para mudar: altere SCHEMA E acrescente uma função
   no fim de MIGRATIONS (bancos existentes; roda uma vez, guardada em PRAGMA user_version). Nunca apagar o banco.
@@ -39,20 +40,22 @@ Flask + pywebview + SQLite.
 - As telas consultam só /api/estado (avisos + Google) a cada 20 s; painel e widget recarregam a cada minuto
   com DA.onRefresh(load, { auto: true }). Preferências do aparelho em DA.store (chaves dailylife.*).
 - Partes nativas (pywebview, win11toast, pystray) podem ser bloqueadas pelo Controle de Aplicativos
-  Inteligente: o app tem plano B (Edge --app e balão da bandeja). diagnostico.bat mostra o que carregou.
+  Inteligente: o app tem plano B (Edge --app e balão da bandeja). tools/diagnostico.py mostra o que carregou.
 - Todos os calendários do Google entram no app, visíveis por padrão.
 - Nada de dados pessoais no Git: data/, credentials.json, token.json.
 - JS sem framework e sem build: um arquivo por tela em static/js, utilidades em api.js (objeto DA).
 - Textos da interface em português do Brasil. Acessibilidade: botões reais, aria-label em botões só com ícone.
-- Mantenha o .exe funcionando (gerar_exe.bat): recursos novos fora de dailylife/ precisam de --add-data.
+- Mantenha o .exe funcionando (packaging/DailyLife.spec): recursos novos fora de dailylife/ entram em datas.
+- Dados: no .exe ficam em %APPDATA%\Daily Life; rodando pelo código, em data/ (config.default_data_dir).
 
 ## Antes de terminar uma mudança
 - `ruff check . && ruff format --check .`
 - `npx prettier --check "dailylife/static/**/*.{js,css}"`
-- `python -m unittest discover -s tests`
+- `python -m pytest` (dependências em requirements-dev.txt)
 - Mudou tela ou CSS: `python tests/e2e_telas.py` e olhar as capturas em data/telas.
 
 ## Como rodar
-- App: DailyLife.bat (ou: python main.py --debug)
+- App: python main.py --debug
+- Instalador: .\build.ps1 (saída em dist/)
 - Só no navegador: python -m dailylife.web.app -> http://127.0.0.1:5055
 - Dados de exemplo: python tools/seed.py --forcar

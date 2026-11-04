@@ -4,10 +4,12 @@ Rodar: python -m unittest discover -s tests -v
 """
 
 import atexit
+import gc
 import os
 import shutil
 import sys
 import tempfile
+import threading
 import unittest
 from datetime import timedelta
 
@@ -37,8 +39,20 @@ from dailylife.desktop.scheduler import Scheduler
 from dailylife.web import app as appmod
 
 
+def fake_toast(*_args, **_kwargs):
+    """Nenhum teste mostra aviso de verdade na tela de quem está usando o PC."""
+
+
+notifier._toast = fake_toast
+
+
 def reset():
+    # Avisos e o salvamento da janela rodam em threads: as que ainda não acabaram seguram o banco no Windows
+    for t in threading.enumerate():
+        if t.name in ("push", "toast") or isinstance(t, threading.Timer):
+            t.join(10)
     db.close_conn()
+    gc.collect()  # conexões de threads que já acabaram só fecham quando o coletor passa
     if os.path.exists(config.DB_PATH):
         os.remove(config.DB_PATH)
     for ext in ("-wal", "-shm"):

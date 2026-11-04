@@ -8,7 +8,7 @@ import sqlite3
 from datetime import datetime
 from typing import Any
 
-from dailylife.core import ValidationError, as_bool
+from dailylife.core import ValidationError, as_bool, as_int, clean_text
 from dailylife.db import get_conn
 
 DEFAULTS = {
@@ -91,6 +91,7 @@ def _hhmm(value: Any, label: str) -> str:
 
 def update(data: dict, conn: sqlite3.Connection | None = None) -> dict:
     conn = conn or get_conn()
+    clean = {}  # confere tudo antes de gravar: um valor errado não deixa a mudança pela metade
     for key, value in data.items():
         if key not in EDITABLE:
             raise ValidationError(f"Configuração desconhecida: {key}")
@@ -101,7 +102,7 @@ def update(data: dict, conn: sqlite3.Connection | None = None) -> dict:
         if key in ("np_inicio", "np_fim"):
             value = _hhmm(value, "Horário do não perturbe")
         if key == "sync_min":
-            value = int(value)
+            value = as_int(value, "Sincronização")
             if value not in (5, 15, 60):
                 raise ValidationError("Sincronização: escolha 5, 15 ou 60 minutos.")
         if key == "nome":
@@ -115,6 +116,8 @@ def update(data: dict, conn: sqlite3.Connection | None = None) -> dict:
             "acesso_rede",
         ):
             value = as_bool(value)
+        clean[key] = value
+    for key, value in clean.items():
         set(key, value, conn)
     return get_all(conn)
 
@@ -129,14 +132,10 @@ def _hash_password(password: str, salt: bytes) -> str:
 
 
 def set_password(password: str, conn: sqlite3.Connection | None = None) -> None:
-    password = (password or "").strip()
+    password = clean_text(password, "Senha")
     if not 6 <= len(password) <= 64:
         raise ValidationError("A senha deve ter de 6 a 64 caracteres.")
     set("pin_hash", _hash_password(password, os.urandom(16)), conn)
-
-
-def clear_password(conn: sqlite3.Connection | None = None) -> None:
-    set("pin_hash", "", conn)
 
 
 def check_password(password: str, conn: sqlite3.Connection | None = None) -> bool:

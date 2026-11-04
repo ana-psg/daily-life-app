@@ -23,7 +23,8 @@ from dailylife import (
 from dailylife.core import ValidationError, events, recurrence, reminders, settings
 from dailylife.desktop.scheduler import Scheduler
 from dailylife.sync import google as google_sync
-from dailylife.web import app as appmod
+from dailylife.sync import push as google_push
+from dailylife.web import net
 
 
 def google_setup(store):
@@ -119,7 +120,7 @@ class SyncTests(unittest.TestCase):
         )
         snapshot = db.row(db.get_conn().execute("SELECT * FROM events WHERE id=?", (e["id"],)))
         events.update(e["id"], {"titulo": "Dentista 14h"})
-        google_sync._mark_pushed(
+        google_push._mark_pushed(
             db.get_conn(), snapshot, "g-d", {"etag": "e", "updated": "2026-10-30T12:00:00Z"}
         )
         self.assertEqual(
@@ -210,9 +211,9 @@ class SyncTests(unittest.TestCase):
         e = E()
         e.error_details = [{"reason": "RATE_LIMIT_EXCEEDED"}]
         e.content = b'{"error": {"errors": [{"reason": "rateLimitExceeded"}]}}'
-        reasons = google_sync._error_reasons(e)
-        self.assertTrue(google_sync._is_rate_limit(403, reasons))
-        self.assertFalse(reasons & google_sync.PERMISSION_REASONS)
+        reasons = google_push._error_reasons(e)
+        self.assertTrue(google_push._is_rate_limit(403, reasons))
+        self.assertFalse(reasons & google_push.PERMISSION_REASONS)
 
     def test_desconectar_durante_sincronizacao(self):  # item 14
         google_sync._lock.acquire()
@@ -299,14 +300,14 @@ class LembreteTests(unittest.TestCase):
 class HostTests(unittest.TestCase):  # item 13
     def test_local_e_tailscale_valem(self):
         for host in ("notebook.tail1234.ts.net", "100.101.102.103:5055", "localhost:5055"):
-            self.assertTrue(appmod.host_allowed(host), host)
+            self.assertTrue(net.host_allowed(host), host)
         for host in (
             "attacker.example:5055",
             "127.0.0.1.nip.io:5055",
             "desktop:5055",
             "ts.net.example.com",
         ):
-            self.assertFalse(appmod.host_allowed(host), host)
+            self.assertFalse(net.host_allowed(host), host)
 
 
 if __name__ == "__main__":

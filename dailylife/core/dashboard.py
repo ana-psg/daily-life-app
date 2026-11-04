@@ -8,7 +8,6 @@ from dailylife.core import events, reminders, settings, todos
 from dailylife.db import get_conn
 
 DIAS_LONGOS = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"]
-DIAS_CURTOS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"]
 MESES = [
     "janeiro",
     "fevereiro",
@@ -27,11 +26,8 @@ MESES = [
 
 def greeting(now: datetime, nome: str) -> str:
     h = now.hour
-    if h < 12:
-        return f"Bom dia, {nome}" if nome else "Bom dia"
-    if h < 18:
-        return f"Boa tarde, {nome}" if nome else "Boa tarde"
-    return f"Boa noite, {nome}" if nome else "Boa noite"
+    text = "Bom dia" if h < 12 else "Boa tarde" if h < 18 else "Boa noite"
+    return f"{text}, {nome}" if nome else text
 
 
 def time_until_text(start: datetime, now: datetime) -> str:
@@ -45,7 +41,7 @@ def time_until_text(start: datetime, now: datetime) -> str:
         return f"em {h} h" + (f" {m} min" if m else "")
     if start.date() == now.date() + timedelta(days=1):
         return "amanhã"
-    return f"{DIAS_CURTOS[start.weekday()].lower()}, {start.day}/{start.month:02d}"
+    return f"{reminders.DIAS[start.weekday()].lower()}, {start.day}/{start.month:02d}"
 
 
 def week_bounds(now: datetime, offset: int = 0) -> tuple[datetime, datetime]:
@@ -87,7 +83,7 @@ def overview(conn: sqlite3.Connection | None = None, now: datetime | None = None
         dias.append(
             {
                 "data": d.date().isoformat(),
-                "nome": DIAS_CURTOS[i],
+                "nome": reminders.DIAS[i],
                 "num": d.day,
                 "hoje": d.date() == now.date(),
             }

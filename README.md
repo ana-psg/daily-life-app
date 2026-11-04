@@ -6,18 +6,15 @@ Feito com Python: Flask (telas e API) + pywebview (janela) + SQLite (dados no se
 
 ---
 
-## 1. Instalar (uma vez)
+## 1. Instalar
 
-1. Instale o **Python 3.12** em [python.org](https://www.python.org/downloads/). Na instalação, marque **"Add python.exe to PATH"**.
-2. Baixe este repositório (botão **Code > Download ZIP**) e descompacte onde quiser (ex.: `Documentos\dailylife`).
-3. Dê dois cliques em **`instalar.bat`**. Ele cria o ambiente `.venv` e instala tudo. No fim pergunta se você quer dados de exemplo.
-4. Abra o app com **`DailyLife.bat`**.
+1. Baixe e abra **`DailyLife-Setup-2.0.0.exe`**. Não precisa de administrador nem de Python.
+2. O Windows pode avisar "editor desconhecido" (o programa não tem assinatura digital paga): clique em **Mais informações > Executar assim mesmo**. Veja a seção 9.
+3. Escolha se quer atalho na Área de Trabalho e **Abrir ao iniciar o Windows**.
+
+Cada pessoa começa com o app vazio. Instalar uma versão nova por cima **não apaga seus dados**, e desinstalar também não: eles ficam em `%APPDATA%\Daily Life`.
 
 > O WebView2 (motor da janela) já vem no Windows 10 e 11. Se a janela abrir em branco, instale o "Microsoft Edge WebView2 Runtime".
-
-> O app usa sempre o horário de São Paulo. Em outro fuso, mude `TZ` em `dailylife/config.py`.
-
-Depois de abrir, coloque o seu nome em **Configurações** para ele aparecer na saudação do painel.
 
 ## 2. Usar
 
@@ -44,11 +41,11 @@ Depois de abrir, coloque o seu nome em **Configurações** para ele aparecer na 
 
 Em **Configurações > Ao ligar o PC**, ligue **Abrir junto com o Windows** e escolha se abre como painel ou widget. Ligue **Widget sempre por cima** para ele ficar como nota adesiva.
 
-Isso cria uma entrada em `HKEY_CURRENT_USER\...\Run` (não precisa de administrador). Se mudar a pasta de lugar, abra o app uma vez pelo `.bat` que ele atualiza o caminho.
+Isso cria uma entrada em `HKEY_CURRENT_USER\...\Run` (não precisa de administrador). O instalador oferece a mesma opção, e desinstalar remove essa entrada.
 
 ## 4. Google Agenda
 
-Todos os calendários da sua conta entram no app (dá para esconder cada um). O que você cria num calendário do Google aparece no celular; calendários locais (Trabalho, Pessoal, Saúde, Projetos) ficam só no PC.
+O Daily Life não traz nenhuma credencial pronta: cada pessoa conecta com um projeto próprio, gratuito, na própria conta Google. Todos os calendários da sua conta entram no app (dá para esconder cada um). O que você cria num calendário do Google aparece no celular; calendários locais (Trabalho, Pessoal, Saúde, Projetos) ficam só no PC.
 
 **Passo a passo (uma vez, uns 10 minutos):**
 
@@ -57,7 +54,7 @@ Todos os calendários da sua conta entram no app (dá para esconder cada um). O 
 3. Menu > **Google Auth Platform > Branding** > Get started. Nome do app: Daily Life; e-mail de suporte: o seu. Em **Audience**, escolha **External**. Termine o assistente.
 4. Em **Google Auth Platform > Audience > Test users**, adicione o seu próprio e-mail.
 5. Em **Google Auth Platform > Clients > Create client**, tipo **Desktop app**, nome "Daily Life". Baixe o JSON.
-6. Renomeie o arquivo para **`credentials.json`** e coloque na pasta do Daily Life (junto do `main.py`).
+6. Renomeie o arquivo para **`credentials.json`** e coloque em `%APPDATA%\Daily Life` (a tela de Configurações mostra a pasta exata).
 7. No app: **Configurações > Google Agenda > Conectar**. O navegador abre; entre na conta e autorize. Pode aparecer "O Google não verificou este app": clique em Avançado > Acessar Daily Life (o app é seu).
 
 **Importante:** com o app em modo "Testing", o Google pode pedir login de novo depois de alguns dias. Se aparecer o aviso "O acesso ao Google expirou", é só clicar em Conectar de novo. Para evitar, em **Audience** clique em **Publish app** (para uso pessoal não precisa de verificação; só aparece o aviso do passo 7).
@@ -81,14 +78,24 @@ Os avisos chegam com os botões **Resolvido** e **Adiar 1 h**, iguais aos do Win
 
 ## 6. Dados e backup
 
-- Tudo fica em `data/dailylife.db`. Backup automático diário em `data/backups` (ficam os últimos 14).
+- Tudo fica em `%APPDATA%\Daily Life`: banco `dailylife.db` e backup automático diário em `backups` (ficam os últimos 14). Rodando pelo código, a pasta é `data/` do projeto.
 - **Exportar/Importar** em Configurações gera ou lê um JSON com tudo (a senha não vai junto).
-- Logs em `data/dailylife.log` (útil se algo der errado).
-- `data/`, `credentials.json` e `token.json` nunca vão para o Git.
+- Logs em `dailylife.log`, na mesma pasta (útil se algo der errado).
+- Banco, token, chaves e `credentials.json` nunca vão para o Git nem para o instalador; o build confere isso e para se encontrar algum.
 
-## 7. Gerar o .exe (opcional)
+## 7. Gerar o instalador
 
-Rode `gerar_exe.bat`. O executável fica em `dist\DailyLife\DailyLife.exe`. Copie para lá a pasta `data` e o `credentials.json` se quiser levar seus dados.
+Precisa do [Inno Setup 6](https://jrsoftware.org/isinfo.php) (`winget install JRSoftware.InnoSetup`) e das dependências de desenvolvimento.
+
+```
+python -m venv .venv
+.venv\Scripts\pip install -r requirements-dev.txt
+.\build.ps1
+```
+
+O script limpa, roda os testes, gera o executável em pasta (sem UPX), confere que nenhum dado pessoal entrou e cria `dist\DailyLife-Setup-<versão>.exe`. Para mudar a versão, altere `pyproject.toml`, `packaging/version_info.txt` e `packaging/DailyLife.iss` (um teste confere que estão iguais).
+
+**Levar dados do `data/` para o programa instalado:** feche o app (bandeja > Sair) e rode `python tools/migrar_dados.py`. Ele só copia: não apaga a origem e não sobrescreve um banco que já exista.
 
 ## 8. Para desenvolver
 
@@ -96,52 +103,58 @@ Rode `gerar_exe.bat`. O executável fica em `dist\DailyLife\DailyLife.exe`. Copi
 .venv\Scripts\activate
 python main.py --debug              # app com DevTools
 python -m dailylife.web.app         # só no navegador: http://127.0.0.1:5055
-python -m unittest discover -s tests -v
+pip install -r requirements-dev.txt  # ferramentas de desenvolvimento (uma vez)
+python -m pytest
 python tests/e2e_telas.py           # robô que clica em todas as telas (precisa do Playwright)
 python tools/seed.py --forcar       # recria os dados de exemplo
 ruff check . && ruff format .       # padrão do Python
 npx prettier --write "dailylife/static/**/*.{js,css}"   # padrão do JavaScript e do CSS
-diagnostico.bat                     # o que carregou e o que o Windows bloqueou
+python tools/diagnostico.py         # o que carregou e o que o Windows bloqueou
 ```
 
 Regras do projeto em `CLAUDE.md`. Estrutura:
 
 ```
-main.py                 abre o app (é o que o DailyLife.bat e o .exe rodam)
+main.py                 abre o app (é o que o .exe roda)
 dailylife/
   config.py             nome, pastas, porta e hora de São Paulo
   db.py                 SQLite: schema atual + migrações numeradas (PRAGMA user_version)
   core/                 regras: todos, reminders, events, calendars, settings, dashboard,
                         recurrence, backup
-  web/                  app.py (telas e segurança), api.py (API JSON), net.py
-  desktop/              app.py (janelas, bandeja), scheduler.py (avisos, Google, backup a cada 30 s),
-                        notifier.py (avisos do Windows), startup.py (abrir com o Windows)
-  sync/google.py        login OAuth e sincronização com o Google Agenda
+  web/                  app.py (monta o servidor), security.py (quem pode pedir o quê),
+                        pages.py (telas e senha), api.py (API JSON), net.py
+  desktop/              app.py (abre tudo), windows.py (painel, widget e plano B no Edge), tray.py (bandeja),
+                        scheduler.py (avisos, Google, backup a cada 30 s), notifier.py, startup.py
+  sync/                 google.py (login e rodada completa), pull.py (baixa), push.py (envia),
+                        convert.py (formatos), common.py
   tailscale.py          acesso pelo celular (tailscale serve) · qr.py: QR code em SVG
   push.py               avisos no celular (Web Push)
   templates/            HTML (Jinja); _icons.html tem todos os ícones
-  static/               css (tokens.css = cores dos temas), js (um por tela), img
-tests/                  testes (unittest) e o robô das telas
-tools/                  seed.py, diagnostico.py, make_icons.py
+  static/               css (tokens.css = cores; base, painel, telas, janelas, responsivo, nesta ordem),
+                        js (um por tela; modal_*.js = janelas de edição), img
+tests/                  testes (pytest) e o robô das telas
+tools/                  seed.py, diagnostico.py, make_icons.py, migrar_dados.py, verificar_pacote.py
+packaging/              receita do executável e script do instalador (Inno Setup)
+build.ps1               gera o instalador
 ```
 
-## 9. Controle de Aplicativos Inteligente do Windows
+## 9. Avisos do Windows ao instalar
 
-O Windows 11 pode bloquear partes do app que não têm assinatura digital (bibliotecas baixadas pelo `instalar.bat`). O Daily Life continua funcionando mesmo assim:
+O Daily Life não tem assinatura digital, que é paga. Por isso:
 
-- Se a janela própria for bloqueada, ele abre no **Edge em modo aplicativo** (sem o widget sem bordas e sem "sempre por cima").
-- Se os avisos com botões forem bloqueados, os avisos saem como **balão do ícone da bandeja**.
+- **SmartScreen ("editor desconhecido"):** aparece ao abrir o instalador baixado. Clique em **Mais informações > Executar assim mesmo**.
+- **Controle de Aplicativos Inteligente:** se estiver ligado no seu Windows, **bloqueia o programa sem dar opção de abrir assim mesmo**. Para instalar, é preciso desligar o recurso em **Segurança do Windows > Controle de aplicativos e do navegador > Configurações do Controle de Aplicativos Inteligente**.
 
-Para ver exatamente o que foi bloqueado, dê dois cliques em **`diagnostico.bat`**. O resultado também fica em `data/diagnostico.txt`. Para ter tudo funcionando, dá para desligar o recurso em **Segurança do Windows > Controle de aplicativos e do navegador > Configurações do Controle de Aplicativos Inteligente**. Desde a atualização de abril de 2026 do Windows 11 é possível ligá-lo de novo depois sem reinstalar o Windows.
+Rodando pelo código, se a janela própria for bloqueada, o app abre no Edge em modo aplicativo; se os avisos com botões forem bloqueados, saem como balão da bandeja. Para ver o que foi bloqueado, rode `python tools/diagnostico.py`.
 
 ## 10. Problemas comuns
 
 | Problema | Solução |
 | --- | --- |
-| Nada acontece ao abrir | Rode `diagnostico.bat`. Veja também `data/dailylife.log` ou rode `python main.py` no terminal. |
+| Nada acontece ao abrir | Veja a seção 9 e o `dailylife.log` em `%APPDATA%\Daily Life`. |
 | Abriu no Edge em vez da janela própria | A janela foi bloqueada pelo Windows. Veja a seção 9. |
 | "A porta 5055 está em uso" | Outro programa usa a porta. Defina a variável `DAILYLIFE_PORT` com outro número. |
-| Avisos não aparecem | Configurações do Windows > Notificações: deixe ligadas para "Python". Confira o "Não perturbe" do app. |
+| Avisos não aparecem | Configurações do Windows > Notificações: deixe as notificações ligadas. Confira o "Não perturbe" do app. |
 | Celular não abre | O Tailscale está ligado no celular e no PC? O acesso aparece como ligado nas Configurações do PC? O PC está ligado e com o app aberto? |
 | Avisos não chegam no celular | Toque em Testar. Confira se as notificações do Chrome estão permitidas e se a economia de bateria não bloqueia o Chrome. |
 | Google pede login de novo | Normal no modo "Testing". Veja a seção 4. |

@@ -1,7 +1,7 @@
 """Caminhos e constantes do Daily Life.
 
 Funciona rodando pelo Python ou empacotado como .exe (PyInstaller).
-Dados e credenciais ficam na pasta do app; telas e estilos, dentro do pacote.
+Telas e estilos ficam dentro do pacote; dados e credenciais, fora dele (ver default_data_dir).
 """
 
 import os
@@ -14,19 +14,30 @@ APP_SLUG = "dailylife"  # nome sem espaço para arquivos, registro e chaves
 PORT = int(os.environ.get("DAILYLIFE_PORT", "5055"))
 TZ = ZoneInfo("America/Sao_Paulo")
 
-if getattr(sys, "frozen", False):  # .exe: recursos dentro do pacote, dados ao lado do executável
+if getattr(sys, "frozen", False):  # .exe: recursos dentro do pacote
     PACKAGE_DIR = os.path.join(getattr(sys, "_MEIPASS", os.path.dirname(sys.executable)), "dailylife")
     BASE_DIR = os.path.dirname(sys.executable)
 else:
     PACKAGE_DIR = os.path.dirname(os.path.abspath(__file__))
     BASE_DIR = os.path.dirname(PACKAGE_DIR)
 
-DATA_DIR = os.environ.get("DAILYLIFE_DATA", os.path.join(BASE_DIR, "data"))
+
+def default_data_dir(frozen: bool, environ: os._Environ | dict, base_dir: str) -> str:
+    """Programa instalado: %APPDATA%\\Daily Life. Rodando pelo código: a pasta data do projeto."""
+    if not frozen:
+        return os.path.join(base_dir, "data")
+    return os.path.join(environ.get("APPDATA") or os.path.expanduser("~"), APP_NAME)
+
+
+FROZEN = bool(getattr(sys, "frozen", False))
+DATA_DIR = os.environ.get("DAILYLIFE_DATA") or default_data_dir(FROZEN, os.environ, BASE_DIR)
 DB_PATH = os.path.join(DATA_DIR, f"{APP_SLUG}.db")
 BACKUP_DIR = os.path.join(DATA_DIR, "backups")
 TOKEN_PATH = os.path.join(DATA_DIR, "token.json")
 LOG_PATH = os.path.join(DATA_DIR, f"{APP_SLUG}.log")
-CREDENTIALS_PATH = os.environ.get("DAILYLIFE_CREDENTIALS", os.path.join(BASE_DIR, "credentials.json"))
+CREDENTIALS_PATH = os.environ.get(
+    "DAILYLIFE_CREDENTIALS", os.path.join(DATA_DIR if FROZEN else BASE_DIR, "credentials.json")
+)
 TEMPLATES_DIR = os.path.join(PACKAGE_DIR, "templates")
 STATIC_DIR = os.path.join(PACKAGE_DIR, "static")
 ICON_PNG = os.path.join(STATIC_DIR, "img", "icon-256.png")
@@ -44,8 +55,8 @@ def iso(dt: datetime) -> str:
 
 
 def parse_iso(value: str) -> datetime:
-    if not value:
-        raise ValueError("data vazia")
+    if not value or not isinstance(value, str):
+        raise ValueError("data vazia ou inválida")
     value = value.strip().replace(" ", "T")
     if len(value) == 10:
         value += "T00:00"

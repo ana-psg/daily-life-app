@@ -1,0 +1,316 @@
+/* ---------- modais ---------- */
+dialog.modal {
+  border: none;
+  padding: 0;
+  border-radius: 30px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--modal-shadow);
+  width: min(520px, calc(100vw - 24px));
+  max-height: calc(100vh - 32px);
+}
+dialog.modal::backdrop {
+  background: var(--scrim);
+}
+.modal form {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 32px);
+}
+.modal .mh {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 22px 8px;
+}
+.modal .mh h2 {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.modal .mb {
+  flex: 1;
+  overflow: auto;
+  padding: 12px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.modal .mf {
+  display: flex;
+  gap: 10px;
+  padding: 14px 22px 22px;
+  flex-wrap: wrap;
+}
+.modal .mf .grow {
+  flex: 1;
+}
+.fl {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.fl > label,
+.fl > .lb {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.in {
+  height: 46px;
+  border-radius: 14px;
+  border: none;
+  background: var(--field);
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 600;
+  width: 100%;
+  min-width: 0;
+}
+textarea.in {
+  height: auto;
+  padding: 12px 14px;
+  resize: vertical;
+  min-height: 70px;
+  font-weight: 500;
+}
+.in.big {
+  height: 52px;
+  font-size: 18px;
+  font-weight: 800;
+}
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.chips button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: none;
+  background: var(--field);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+.chips button[aria-pressed='true'] {
+  --c: var(--accent);
+  background: color-mix(in srgb, var(--c) var(--tint-bg), var(--surface));
+  color: color-mix(in srgb, var(--c) var(--tint-fg), var(--ink));
+  outline: 2px solid var(--c);
+  outline-offset: -2px;
+}
+.inline-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  min-height: 32px;
+}
+.inline-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+.warnbox {
+  border-radius: 14px;
+  background: var(--danger-soft);
+  color: var(--danger);
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.sub-edit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sub-edit .in {
+  height: 40px;
+}
+
+/* ---------- avisos dentro do app ---------- */
+.toasts {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: min(360px, calc(100vw - 32px));
+}
+.toast {
+  background: var(--dock);
+  color: #fff;
+  border-radius: 18px;
+  padding: 14px 16px;
+  box-shadow: var(--modal-shadow);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  animation: up 0.2s ease-out;
+}
+.toast .tt {
+  font-weight: 800;
+  font-size: 14px;
+}
+.toast .tb {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+.toast .x {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: inherit;
+  opacity: 0.7;
+  padding: 0;
+}
+.toast.err {
+  background: var(--danger);
+  color: #fff;
+}
+@keyframes up {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* ---------- widget ---------- */
+.widget-body {
+  background: var(--bg);
+  min-height: 100vh;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+.widget-body .whead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: move;
+  user-select: none;
+}
+.widget-body .clock {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.widget-body .wbtns {
+  display: flex;
+  gap: 6px;
+  cursor: default;
+}
+.widget-body .icon-btn {
+  width: 36px;
+  height: 36px;
+  box-shadow: none;
+}
+.wcard {
+  background: var(--surface);
+  border-radius: 22px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.whero {
+  border-radius: 22px;
+  background: var(--accent);
+  color: var(--on-accent);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.whero .top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+.whero .badge {
+  font-size: 11px;
+  font-weight: 800;
+  background: var(--chip);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+.whero .title {
+  font-size: 18px;
+  font-weight: 800;
+}
+.whero a {
+  font-size: 12px;
+  font-weight: 800;
+}
+.wline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 30px;
+  font-size: 13px;
+}
+.wline b {
+  width: 42px;
+  font-weight: 800;
+  flex: none;
+}
+.wline span:last-child {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wsticky {
+  background: var(--sticky);
+  color: var(--sticky-ink);
+  border-radius: 22px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.wsticky .wl {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  min-height: 26px;
+  align-items: center;
+}
+.wsticky .wl.late b {
+  color: var(--danger);
+}
+.wscroll {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 6px;
+}

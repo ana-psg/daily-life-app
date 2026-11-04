@@ -305,7 +305,8 @@ def api_google_connect():
     if not google_sync.LIBS_OK:
         raise ValidationError("Bibliotecas do Google não instaladas. Rode: pip install -r requirements.txt")
     if not google_sync.has_credentials():
-        raise ValidationError("Coloque o arquivo credentials.json na pasta do Daily Life (veja o README).")
+        folder = os.path.dirname(config.CREDENTIALS_PATH)
+        raise ValidationError(f"Coloque o arquivo credentials.json em {folder} (veja o README).")
 
     def run() -> None:
         try:

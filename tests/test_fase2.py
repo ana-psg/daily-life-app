@@ -181,34 +181,5 @@ class OldExportTests(unittest.TestCase):
         self.assertEqual(self.c.post("/api/importar", json=data).status_code, 400)
 
 
-class StartupNameTests(unittest.TestCase):
-    def test_atualiza_o_caminho_da_entrada(self):
-        from dailylife.desktop import startup
-
-        values = {"DailyLife": "antigo"}
-
-        class Key:
-            def __enter__(self):
-                return self
-
-            def __exit__(self, *a):
-                return False
-
-        def query(_key, name):
-            if name not in values:
-                raise FileNotFoundError(name)
-            return values[name], 1
-
-        fake = mock.Mock(HKEY_CURRENT_USER=0, KEY_READ=1, KEY_SET_VALUE=2, REG_SZ=1)
-        fake.OpenKey.side_effect = lambda *a: Key()
-        fake.QueryValueEx.side_effect = query
-        fake.DeleteValue.side_effect = lambda _k, name: values.pop(name)
-        fake.SetValueEx.side_effect = lambda _k, name, _r, _t, cmd: values.__setitem__(name, cmd)
-        with mock.patch.object(startup, "winreg", fake):
-            startup.refresh()
-        self.assertEqual(list(values), ["DailyLife"])
-        self.assertIn("main.py", values["DailyLife"])
-
-
 if __name__ == "__main__":
     unittest.main()

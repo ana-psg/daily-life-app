@@ -6,7 +6,7 @@ from datetime import timedelta
 from typing import Any
 
 from dailylife import config
-from dailylife.core import NotFound, ValidationError, as_bool, require_text
+from dailylife.core import NotFound, ValidationError, as_bool, as_int, clean_text, require_text
 from dailylife.db import get_conn, row, rows
 
 PRIORIDADES = ("alta", "media", "baixa")
@@ -138,9 +138,9 @@ def create(data: dict, conn: sqlite3.Connection | None = None) -> dict:
     prioridade = data.get("prioridade") or "media"
     if prioridade not in PRIORIDADES:
         raise ValidationError("Prioridade inválida.")
-    parent_id = data.get("parent_id")
+    parent_id = as_int(data["parent_id"], "Tarefa principal") if data.get("parent_id") else None
     if parent_id:
-        parent = conn.execute("SELECT lista FROM todos WHERE id=?", (int(parent_id),)).fetchone()
+        parent = conn.execute("SELECT lista FROM todos WHERE id=?", (parent_id,)).fetchone()
         if not parent:
             raise ValidationError("Tarefa principal não encontrada.")
         lista = parent["lista"]
@@ -157,7 +157,7 @@ def create(data: dict, conn: sqlite3.Connection | None = None) -> dict:
             lista,
             parent_id,
             titulo,
-            (data.get("notas") or "").strip(),
+            clean_text(data.get("notas"), "Notas"),
             prioridade,
             _normalize_due(data.get("vencimento")),
             ordem,
@@ -176,7 +176,7 @@ def update(todo_id: int, data: dict, conn: sqlite3.Connection | None = None) -> 
     if "titulo" in data:
         fields["titulo"] = require_text(data, "titulo", "O título da tarefa")
     if "notas" in data:
-        fields["notas"] = (data.get("notas") or "").strip()
+        fields["notas"] = clean_text(data.get("notas"), "Notas")
     if "prioridade" in data:
         if data["prioridade"] not in PRIORIDADES:
             raise ValidationError("Prioridade inválida.")
@@ -212,6 +212,8 @@ def delete(todo_id: int, conn: sqlite3.Connection | None = None) -> None:
 
 def reorder(ids: list[int], conn: sqlite3.Connection | None = None) -> None:
     conn = conn or get_conn()
+    if not isinstance(ids, list):
+        raise ValidationError("Ordem inválida.")
     for i, todo_id in enumerate(ids):
-        conn.execute("UPDATE todos SET ordem=? WHERE id=?", (i, int(todo_id)))
+        conn.execute("UPDATE todos SET ordem=? WHERE id=?", (i, as_int(todo_id, "Tarefa")))
     conn.commit()

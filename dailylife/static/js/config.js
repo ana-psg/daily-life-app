@@ -51,7 +51,7 @@
       html =
         '<div class="banner warn">Faltam as bibliotecas do Google. No terminal da pasta do app rode: <code>pip install -r requirements.txt</code></div>';
     } else if (!g.credenciais) {
-      html = `<p class="note">Para conectar, crie as credenciais no Google Cloud e salve o arquivo <code>credentials.json</code> na pasta do Daily Life. O passo a passo está no README, na seção "Google Agenda".</p>`;
+      html = `<p class="note">Para conectar, crie as credenciais no Google Cloud e salve o arquivo <code>credentials.json</code> em <code>${esc(g.pasta_credenciais)}</code>. O passo a passo está no Manual do Daily Life, na seção "Google Agenda".</p>`;
     } else if (g.conectando) {
       html = '<div class="banner">Abri o navegador. Entre na sua conta Google e autorize o Daily Life…</div>';
       gPoll = setTimeout(() => google().catch(() => {}), 2000);
@@ -179,7 +179,7 @@
     }
     const devices = c.push.aparelhos;
     const pushNote = !c.push.disponivel
-      ? '<div class="banner warn">Avisos no celular precisam da biblioteca cryptography. Rode o instalar.bat de novo.</div>'
+      ? '<div class="banner warn">Avisos no celular precisam da biblioteca cryptography. Reinstale o Daily Life.</div>'
       : devices
         ? `<div class="hrow center wrap-row"><span class="note">${devices} ${devices === 1 ? 'aparelho recebe' : 'aparelhos recebem'} avisos.</span>
             <button class="btn ghost sm" type="button" data-cel="teste">Enviar aviso de teste</button></div>`

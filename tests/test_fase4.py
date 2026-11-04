@@ -21,6 +21,7 @@ from dailylife import push, qr, tailscale
 from dailylife.core import ValidationError, settings
 from dailylife.desktop import notifier
 from dailylife.web import app as appmod
+from dailylife.web import security
 
 TS = "notebook.tail1234.ts.net"
 
@@ -74,7 +75,7 @@ class TailscaleTests(unittest.TestCase):
 class RemoteAccessTests(unittest.TestCase):
     def setUp(self):
         reset()
-        appmod._login_fails.clear()
+        security._login_fails.clear()
         self.c = appmod.create_app().test_client()
 
     def test_pedido_pelo_tailscale_conta_como_de_fora(self):

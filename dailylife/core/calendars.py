@@ -10,17 +10,23 @@ from dailylife.db import get_conn, row, rows
 HEX = re.compile(r"^#[0-9A-Fa-f]{6}$")
 
 
+def _is_color(value: object) -> bool:
+    return isinstance(value, str) and bool(HEX.match(value))
+
+
+def _serialize(c: dict) -> dict:
+    c["visivel"] = bool(c["visivel"])
+    c["somente_leitura"] = bool(c["somente_leitura"])
+    return c
+
+
 def list_all(conn: sqlite3.Connection | None = None, only_visible: bool = False) -> list[dict]:
     conn = conn or get_conn()
     q = "SELECT * FROM calendars"
     if only_visible:
         q += " WHERE visivel=1"
     q += " ORDER BY origem='google', ordem, nome"
-    out = rows(conn.execute(q))
-    for c in out:
-        c["visivel"] = bool(c["visivel"])
-        c["somente_leitura"] = bool(c["somente_leitura"])
-    return out
+    return [_serialize(c) for c in rows(conn.execute(q))]
 
 
 def get(cal_id: int, conn: sqlite3.Connection | None = None) -> dict:
@@ -28,16 +34,14 @@ def get(cal_id: int, conn: sqlite3.Connection | None = None) -> dict:
     c = row(conn.execute("SELECT * FROM calendars WHERE id=?", (cal_id,)))
     if not c:
         raise NotFound("Calendário não encontrado.")
-    c["visivel"] = bool(c["visivel"])
-    c["somente_leitura"] = bool(c["somente_leitura"])
-    return c
+    return _serialize(c)
 
 
 def create(data: dict, conn: sqlite3.Connection | None = None) -> dict:
     conn = conn or get_conn()
     nome = require_text(data, "nome", "O nome do calendário", 60)
     cor = data.get("cor") or "#7152F0"
-    if not HEX.match(cor):
+    if not _is_color(cor):
         raise ValidationError("Cor inválida.")
     stamp = config.iso(config.now())
     ordem = conn.execute("SELECT COALESCE(MAX(ordem),0)+1 FROM calendars").fetchone()[0]
@@ -57,7 +61,7 @@ def update(cal_id: int, data: dict, conn: sqlite3.Connection | None = None) -> d
     if "nome" in data:
         fields["nome"] = require_text(data, "nome", "O nome do calendário", 60)
     if "cor" in data:
-        if not HEX.match(data["cor"] or ""):
+        if not _is_color(data["cor"]):
             raise ValidationError("Cor inválida.")
         fields["cor"] = data["cor"]
     if "visivel" in data:

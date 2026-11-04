@@ -1,0 +1,226 @@
+/* ---------- entrar (PIN) ---------- */
+.login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.login form {
+  background: var(--surface);
+  border-radius: 30px;
+  padding: 28px;
+  width: min(360px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: var(--shadow);
+}
+.login .secret {
+  height: 52px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-align: center;
+}
+
+/* ---------- celular e telas estreitas ---------- */
+@media (max-width: 760px) {
+  .page {
+    padding: 18px 14px 96px;
+  }
+  .topbar h1 {
+    font-size: 24px;
+  }
+  .topbar .actions .pill-status {
+    display: none;
+  }
+  .dock.main-nav {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 14px;
+    z-index: 40;
+    box-shadow: var(--modal-shadow);
+  }
+  .desk-only {
+    display: none !important;
+  }
+  .cal-cols .col-main {
+    order: -1;
+  }
+  .month-wrap {
+    min-width: 0 !important;
+  }
+  .month,
+  .month-head {
+    gap: 4px;
+  }
+  .mcell {
+    min-height: 64px;
+    padding: 4px;
+    border-radius: 12px;
+  }
+  .mcell .num {
+    min-width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+  .mcell .more {
+    display: none;
+  }
+  .mcell .chip-ev {
+    font-size: 0;
+    height: 6px;
+    padding: 0;
+  }
+  .toasts {
+    bottom: 86px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+.chips button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.in:disabled,
+select.in:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+.modal .mb > * {
+  flex-shrink: 0;
+}
+
+/* ---------- utilitários (no lugar de style="" nas telas) ---------- */
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+.hrow {
+  display: flex;
+  gap: 8px;
+}
+.wrap-row {
+  flex-wrap: wrap;
+}
+.center {
+  align-items: center;
+}
+.between {
+  justify-content: space-between;
+}
+.end {
+  justify-content: flex-end;
+}
+.flex-1 {
+  flex: 1;
+}
+.seg-2,
+.seg-3 {
+  display: grid;
+}
+.seg-2 {
+  grid-template-columns: 1fr 1fr;
+}
+.seg-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+.gap-2 {
+  gap: 2px;
+}
+.gap-8 {
+  gap: 8px;
+}
+.gap-10 {
+  gap: 10px;
+}
+.gap-16 {
+  gap: 16px;
+}
+.basis-260 {
+  flex-basis: 260px;
+}
+.basis-680 {
+  flex-basis: 680px;
+}
+.w-full {
+  width: 100%;
+}
+.w-160 {
+  width: 160px;
+}
+.mw-260 {
+  max-width: 260px;
+}
+.h-38 {
+  height: 38px;
+}
+.mt-4 {
+  margin-top: 4px;
+}
+.mt-6 {
+  margin-top: 6px;
+}
+.mb-2 {
+  margin-bottom: 2px;
+}
+.mb-6 {
+  margin-bottom: 6px;
+}
+.p-16 {
+  padding: 16px;
+}
+.r-16 {
+  border-radius: 16px;
+}
+.fs-12 {
+  font-size: 12px;
+}
+.fs-13 {
+  font-size: 13px;
+}
+.fs-15 {
+  font-size: 15px;
+}
+.fs-17 {
+  font-size: 17px;
+}
+.fs-19 {
+  font-size: 19px;
+}
+.fs-24 {
+  font-size: 24px;
+}
+.fw-600 {
+  font-weight: 600;
+}
+.fw-700 {
+  font-weight: 700;
+}
+.fw-800 {
+  font-weight: 800;
+}
+.tight {
+  letter-spacing: -0.02em;
+}
+.c-inherit {
+  color: inherit;
+}
+.c-accent {
+  color: var(--accent-ink);
+}
+.pointer {
+  cursor: pointer;
+}
+.color-input {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: none;
+}

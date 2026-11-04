@@ -1,4 +1,4 @@
-"""Agendador em segundo plano (Fase 4).
+"""Agendador em segundo plano.
 
 A cada 30 s: lembretes vencidos, avisos de compromissos, sincronização com o Google
 (no intervalo escolhido) e backup diário.
@@ -22,7 +22,7 @@ TICK = 30
 class Scheduler(threading.Thread):
     def __init__(self) -> None:
         super().__init__(daemon=True, name="agendador")
-        self._stop = threading.Event()
+        self._stopping = threading.Event()
         self._sync_now = threading.Event()
         self._first = True
         self._last_sync = 0.0
@@ -30,14 +30,14 @@ class Scheduler(threading.Thread):
         self._sync_again = False
 
     def stop(self) -> None:
-        self._stop.set()
+        self._stopping.set()
 
     def request_sync(self) -> None:
         self._sync_now.set()
 
     def run(self) -> None:
         db.init_db()
-        while not self._stop.is_set():
+        while not self._stopping.is_set():
             try:
                 self.tick()
             except Exception:

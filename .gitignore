@@ -12,7 +12,6 @@ venv/
 # Executável
 build/
 dist/
-*.spec
 
 # Ferramentas
 .ruff_cache/

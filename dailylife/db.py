@@ -186,10 +186,19 @@ def _m3_push_subscriptions(conn: sqlite3.Connection) -> None:
     conn.execute(_table("push_subs"))
 
 
+def _m4_keep_greeting_name(conn: sqlite3.Connection) -> None:
+    """Passo mantido para a numeração das migrações: não define mais um nome padrão.
+
+    Antes ele gravava um nome fixo na saudação de quem atualizava; com o instalador para qualquer
+    pessoa, cada um coloca o próprio nome em Configurações.
+    """
+
+
 MIGRATIONS: list[Callable[[sqlite3.Connection], None]] = [
     _m1_series_and_reminders,
     _m2_todo_list_column,
     _m3_push_subscriptions,
+    _m4_keep_greeting_name,
 ]
 
 

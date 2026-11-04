@@ -27,8 +27,11 @@ from dailylife.core import (
 )
 from dailylife.desktop import notifier
 from dailylife.desktop.scheduler import Scheduler
+from dailylife.sync import convert as google_convert
 from dailylife.sync import google as google_sync
+from dailylife.sync import push as google_push
 from dailylife.web import app as appmod
+from dailylife.web import security
 
 
 class SegurancaTests(unittest.TestCase):
@@ -61,7 +64,7 @@ class SegurancaTests(unittest.TestCase):
     def test_trocar_pin_desconecta_outros_aparelhos(self):
         settings.set("acesso_rede", True)
         settings.set_password("chave1357")
-        appmod._login_fails.clear()
+        security._login_fails.clear()
         remote = {"REMOTE_ADDR": "192.168.0.60"}
         self.c.post("/entrar", data={"senha": "chave1357"}, environ_base=remote)
         self.assertEqual(self.c.get("/api/painel", environ_base=remote).status_code, 200)
@@ -213,7 +216,7 @@ class SyncRobustaTests(unittest.TestCase):
 
         resp = Resp()
         resp.status = status
-        resp.reason = reason
+        resp.reason = "erro de teste"  # versões novas da biblioteca do Google leem este campo
         err = google_sync.HttpError(resp, b"{}") if google_sync.LIBS_OK else Exception()
         if not google_sync.LIBS_OK:
             err.resp = resp
@@ -266,7 +269,7 @@ class SyncRobustaTests(unittest.TestCase):
         self.assertEqual(events.get(a["id"])["titulo"], "Com problema")
 
     def test_patch_zera_o_outro_tipo_de_data(self):  # revisão 4 (causa provável)
-        body = google_sync._event_body(
+        body = google_convert.event_body(
             {
                 "titulo": "x",
                 "local": "",
@@ -294,7 +297,7 @@ class SyncRobustaTests(unittest.TestCase):
         row = db.row(db.get_conn().execute("SELECT * FROM events WHERE id=?", (e["id"],)))
         events.update(e["id"], {"titulo": "v2"})  # editado no mesmo minuto, enquanto subia
         db.get_conn().commit()
-        google_sync._mark_pushed(
+        google_push._mark_pushed(
             db.get_conn(), row, "gid-1", {"etag": "e", "updated": "2026-10-22T12:00:00Z"}
         )
         r = (

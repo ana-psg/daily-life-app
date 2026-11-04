@@ -11,8 +11,25 @@ class NotFound(LookupError):
     """Registro não encontrado."""
 
 
+def clean_text(value: Any, label: str = "Texto", max_len: int | None = None) -> str:
+    """Texto sem espaços nas pontas; vazio para None e erro para qualquer outro tipo."""
+    if value is None:
+        return ""
+    if not isinstance(value, str):
+        raise ValidationError(f"{label}: valor inválido.")
+    value = value.strip()
+    return value[:max_len] if max_len else value
+
+
+def as_int(value: Any, label: str = "Número") -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError, OverflowError):
+        raise ValidationError(f"{label}: valor inválido.") from None
+
+
 def require_text(data: dict, key: str, label: str, max_len: int = 300) -> str:
-    value = (data.get(key) or "").strip()
+    value = clean_text(data.get(key), label)
     if not value:
         raise ValidationError(f"{label} é obrigatório.")
     if len(value) > max_len:
