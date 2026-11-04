@@ -1,6 +1,6 @@
 """Diagnóstico do Daily Life: mostra o que carrega e o que o Windows bloqueou.
 
-Uso: diagnostico.bat (ou: python tools/diagnostico.py)
+Uso: python tools/diagnostico.py
 O resultado também é salvo em data/diagnostico.txt.
 """
 
@@ -73,7 +73,7 @@ def main():
             "Aplicativos Inteligente > Desativado.",
         ]
     elif any("FALTANDO" in ln for ln in lines):
-        lines.append("Faltam bibliotecas: rode o instalar.bat de novo.")
+        lines.append("Faltam bibliotecas: pip install -r requirements.txt")
     else:
         lines.append("Tudo certo: todas as partes do Daily Life carregaram.")
     text = "\n".join(lines)

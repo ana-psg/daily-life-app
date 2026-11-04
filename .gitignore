@@ -2,18 +2,35 @@
 /data/
 credentials.json
 token.json
+*.db
+*.db-*
+*.pem
+*.key
+*.log
+*.zip
+backups/
+
+# Anotações locais de sessões
+registro-claude/
 
 # Python
 __pycache__/
 *.pyc
 .venv/
 venv/
+.pytest_cache/
 
 # Executável
 build/
 dist/
-*.spec
 
 # Ferramentas
 .ruff_cache/
 node_modules/
+
+# Sistema e IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.env

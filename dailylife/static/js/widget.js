@@ -21,10 +21,10 @@
       ? `
       <div class="whero">
         <div class="top"><span>${esc(p.horario)}${p.inicio.slice(0, 10) !== data.agora.slice(0, 10) ? ' · ' + DA.DIAS[DA.weekday(parse(p.inicio))] : ''}</span><span class="badge">${esc(p.em)}</span></div>
-        <button type="button" class="title" style="background:none;border:none;color:inherit;text-align:left;padding:0" data-ev="${p.id}" data-oc="${p.inicio}">${esc(p.titulo)}</button>
-        ${isUrl(p.local) ? `<a href="${esc(/^https?:/.test(p.local) ? p.local : 'https://' + p.local)}" target="_blank" rel="noopener">Entrar na chamada</a>` : p.local ? `<span style="font-size:12px;font-weight:700;opacity:.85">${esc(p.local)}</span>` : ''}
+        <button type="button" class="title bare" data-ev="${p.id}" data-oc="${p.inicio}">${esc(p.titulo)}</button>
+        ${isUrl(p.local) ? `<a href="${esc(/^https?:/.test(p.local) ? p.local : 'https://' + p.local)}" target="_blank" rel="noopener">Entrar na chamada</a>` : p.local ? `<span class="fs-12 fw-700 op-85">${esc(p.local)}</span>` : ''}
       </div>`
-      : `<div class="wcard"><span class="muted" style="font-size:13px;font-weight:700">Nada marcado nos próximos dias</span></div>`;
+      : `<div class="wcard"><span class="muted fs-13 fw-700">Nada marcado nos próximos dias</span></div>`;
 
     const now = data.agora;
     const later = data.hoje_eventos.filter(
@@ -35,7 +35,7 @@
       .slice(0, 4)
       .map(
         (e) => `
-      <button type="button" class="wline" style="background:none;border:none;width:100%;text-align:left;padding:0" data-ev="${e.id}" data-oc="${e.inicio}">
+      <button type="button" class="wline bare w-full" data-ev="${e.id}" data-oc="${e.inicio}">
         <span class="dot" style="--c:${esc(e.cor)}"></span><b>${e.inicio.slice(11, 16)}</b><span>${esc(e.titulo)}</span></button>`,
       )
       .join('');
@@ -48,9 +48,9 @@
       ? shown
           .map(
             (t) => `
-      <div class="item${t.feito ? ' done' : ''}" style="min-height:38px">
-        <button type="button" class="check" style="width:20px;height:20px" data-todo="${t.id}" aria-pressed="${t.feito}" aria-label="Marcar: ${esc(t.titulo)}">${icon('check', 10)}</button>
-        <span class="txt" style="font-size:13px">${esc(t.titulo)}</span>
+      <div class="item min-h-38${t.feito ? ' done' : ''}">
+        <button type="button" class="check s20" data-todo="${t.id}" aria-pressed="${t.feito}" aria-label="Marcar: ${esc(t.titulo)}">${icon('check', 10)}</button>
+        <span class="txt fs-13">${esc(t.titulo)}</span>
       </div>`,
           )
           .join('')
@@ -63,8 +63,8 @@
       .map(
         (r) => `
       <div class="wl${r.atrasado ? ' late' : ''}">
-        <button type="button" class="check" style="width:18px;height:18px;border-color:var(--sticky-ink)" data-rem="${r.id}" aria-label="Marcar lembrete: ${esc(r.titulo)}">${icon('check', 10)}</button>
-        <span style="flex:1;font-weight:700">${esc(r.titulo)}</span><b>${esc(r.hora)}</b></div>`,
+        <button type="button" class="check s18 on-sticky" data-rem="${r.id}" aria-label="Marcar lembrete: ${esc(r.titulo)}">${icon('check', 10)}</button>
+        <span class="flex-1 fw-700">${esc(r.titulo)}</span><b>${esc(r.hora)}</b></div>`,
       )
       .join('');
   }

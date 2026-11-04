@@ -1,6 +1,7 @@
-"""Backup diário do banco e exportar/importar em JSON (Fase 8)."""
+"""Backup diário do banco e exportar/importar em JSON."""
 
 import glob
+import json
 import os
 import re
 import sqlite3
@@ -29,8 +30,7 @@ def make_backup(
     if not force and settings.get("ultimo_backup", conn) == today:
         return None
     os.makedirs(config.BACKUP_DIR, exist_ok=True)
-    name = f"{PREFIX}{today}.db" if not force else f"{PREFIX}{today}-{datetime.now():%H%M%S}-{motivo}.db"
-    dest = os.path.join(config.BACKUP_DIR, name)
+    dest = _automatic_path(today) if not force else _manual_path(today, motivo)
     target = sqlite3.connect(dest)
     try:
         conn.backup(target)
@@ -44,6 +44,19 @@ def make_backup(
         except OSError:
             pass
     return dest
+
+
+def _automatic_path(today: str) -> str:
+    return os.path.join(config.BACKUP_DIR, f"{PREFIX}{today}.db")
+
+
+def _manual_path(today: str, motivo: str) -> str:
+    """Nome ainda não usado: dois backups no mesmo segundo não podem se sobrescrever."""
+    base = os.path.join(config.BACKUP_DIR, f"{PREFIX}{today}-{datetime.now(config.TZ):%H%M%S}-{motivo}")
+    path, n = f"{base}.db", 2
+    while os.path.exists(path):
+        path, n = f"{base}-{n}.db", n + 1
+    return path
 
 
 def _backup_files() -> list[str]:
@@ -75,6 +88,15 @@ def _upgrade_old_export(data: dict) -> None:
             t["lista"] = keys.get(t.pop("list_id", None)) or "hoje"
 
 
+def _require_dates(item: dict, keys: tuple[str, ...], label: str) -> None:
+    """Uma data ruim no banco quebraria todas as telas que listam esse registro."""
+    try:
+        for key in keys:
+            config.parse_iso(item.get(key))
+    except ValueError:
+        raise ValueError(f"Arquivo com data inválida em {label}.") from None
+
+
 def _validate_import(data: dict) -> None:
     """Confere o arquivo inteiro antes de apagar qualquer coisa."""
     from dailylife.core import recurrence, todos
@@ -97,7 +119,14 @@ def _validate_import(data: dict) -> None:
         if r.get("cor") not in ("amarelo", "rosa", "azul", "verde", "lilas"):
             raise ValueError("Arquivo com cor de lembrete inválida.")
         recurrence.parse_reminder_rule(r.get("repeticao") or "")
+        _require_dates(r, ("quando",), "lembrete")
+    for s in data["settings"]:
+        try:
+            json.loads(s["valor"])
+        except (KeyError, TypeError, ValueError):
+            raise ValueError("Arquivo com configuração inválida.") from None
     for e in data["events"]:
+        _require_dates(e, ("inicio", "fim"), "compromisso")
         if (e.get("repeticao") or "") not in recurrence.EVENT_RULES:
             raise ValueError("Arquivo com repetição de compromisso inválida.")
     if not data["calendars"]:
@@ -111,6 +140,7 @@ def import_data(data: dict, conn: sqlite3.Connection | None = None) -> dict[str,
         _upgrade_old_export(data)
     _validate_import(data)
     make_backup(conn, force=True, motivo="antes-de-importar")
+    conn.commit()  # PRAGMA foreign_keys não faz nada dentro de uma transação aberta
     try:
         conn.execute("PRAGMA foreign_keys = OFF")
         conn.execute("BEGIN")
@@ -133,6 +163,9 @@ def import_data(data: dict, conn: sqlite3.Connection | None = None) -> dict[str,
                 marks = ",".join("?" * len(item))
                 conn.execute(f"INSERT OR REPLACE INTO {t} ({cols}) VALUES ({marks})", list(item.values()))
         conn.execute("COMMIT")
+    except sqlite3.IntegrityError:
+        conn.execute("ROLLBACK")
+        raise ValueError("Arquivo incompleto: faltam campos obrigatórios. Nada foi alterado.") from None
     except Exception:
         conn.execute("ROLLBACK")
         raise

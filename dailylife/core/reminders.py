@@ -8,7 +8,7 @@ import sqlite3
 from datetime import datetime, timedelta
 
 from dailylife import config
-from dailylife.core import NotFound, ValidationError, recurrence, require_text
+from dailylife.core import NotFound, ValidationError, as_int, clean_text, recurrence, require_text
 from dailylife.db import get_conn, row, rows
 
 CORES = ("amarelo", "rosa", "azul", "verde", "lilas")
@@ -142,7 +142,7 @@ def _validate(data: dict, partial: bool = False) -> dict:
     if not partial or "titulo" in data:
         out["titulo"] = require_text(data, "titulo", "O título do lembrete", 200)
     if "descricao" in data:
-        out["descricao"] = (data.get("descricao") or "").strip()[:1000]
+        out["descricao"] = clean_text(data.get("descricao"), "Descrição", 1000)
     if not partial or "quando" in data:
         try:
             q = config.parse_iso(data.get("quando") or "")
@@ -151,11 +151,12 @@ def _validate(data: dict, partial: bool = False) -> dict:
         out["quando"] = config.iso(q)
         out["hora_base"] = q.strftime("%H:%M")
     if "repeticao" in data:
+        rule = clean_text(data.get("repeticao") or "", "Repetição")
         try:
-            recurrence.parse_reminder_rule(data.get("repeticao") or "")
+            recurrence.parse_reminder_rule(rule)
         except ValueError as e:
             raise ValidationError(str(e)) from None
-        out["repeticao"] = (data.get("repeticao") or "").strip()
+        out["repeticao"] = rule
     if "cor" in data:
         if data["cor"] not in CORES:
             raise ValidationError("Cor inválida.")
@@ -289,12 +290,13 @@ def snooze(
 ) -> dict:
     conn = conn or get_conn()
     now = now or config.now()
-    minutos = int(minutos)
+    minutos = as_int(minutos, "Adiamento")
     if not 1 <= minutos <= 24 * 60:
         raise ValidationError("Adiamento inválido.")
     get(rem_id, conn, now)
     conn.execute(
-        "UPDATE reminders SET quando=?, resolvido=0, ultimo_aviso=NULL, atualizado_em=? WHERE id=?",
+        "UPDATE reminders SET quando=?, resolvido=0, resolvido_em=NULL, ultimo_resolvido=NULL, "
+        "ultimo_aviso=NULL, atualizado_em=? WHERE id=?",
         (config.iso(now + timedelta(minutes=minutos)), config.iso(now), rem_id),
     )
     conn.commit()

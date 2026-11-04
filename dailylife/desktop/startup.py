@@ -47,8 +47,11 @@ def is_enabled() -> bool:
 
 
 def refresh() -> None:
-    """Ao abrir: atualiza o caminho se a pasta mudou."""
-    if is_enabled():
+    """Ao abrir: atualiza o caminho guardado, caso a pasta do app tenha mudado.
+
+    Uma cópia aberta com outra pasta de dados ou porta (teste) não pode tomar o lugar do app de verdade.
+    """
+    if is_enabled() and not (os.environ.get("DAILYLIFE_DATA") or os.environ.get("DAILYLIFE_PORT")):
         set_enabled(True)
 
 

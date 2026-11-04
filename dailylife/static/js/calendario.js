@@ -107,8 +107,7 @@
     for (let d = new Date(start); d < end; d = addDays(d, 1)) {
       days.push({ data: isoDate(d), nome: DIAS[weekday(d)], num: d.getDate(), hoje: isoDate(d) === today });
     }
-    $('#c-main').innerHTML =
-      '<div id="c-tl"></div><div class="legend" id="c-legend" style="margin-top:12px"></div>';
+    $('#c-main').innerHTML = '<div id="c-tl"></div><div class="legend mt-12" id="c-legend"></div>';
     DA.timeline($('#c-tl'), {
       days,
       eventos,

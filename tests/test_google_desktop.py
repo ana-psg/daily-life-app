@@ -252,7 +252,7 @@ class DesktopImportTests(unittest.TestCase):
         reset()
         import importlib
 
-        from dailylife.desktop import app as desktop
+        from dailylife.desktop import windows as desktop
 
         importlib.reload(desktop)
         d = desktop.Desktop()

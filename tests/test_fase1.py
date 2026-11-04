@@ -29,8 +29,10 @@ from dailylife.core import (
     settings,
 )
 from dailylife.desktop import notifier
+from dailylife.sync import convert as google_convert
 from dailylife.sync import google as google_sync
 from dailylife.web import app as appmod
+from dailylife.web import security
 
 
 def cal_id(nome="Trabalho"):
@@ -259,7 +261,7 @@ class FakeEvents:
 
     def instances(self, calendarId, eventId, timeMin, timeMax, showDeleted=True):
         self.calls.append(("instances", eventId, timeMin))
-        occ = google_sync._to_local(timeMin) + timedelta(minutes=1)
+        occ = google_convert.to_local(timeMin) + timedelta(minutes=1)
         inst = {
             "id": f"{eventId}_{occ:%Y%m%dT%H%M}",
             "recurringEventId": eventId,
@@ -484,14 +486,14 @@ class NotifierTests(unittest.TestCase):
 class PinLimitTests(unittest.TestCase):
     def setUp(self):
         reset()
-        appmod._login_fails.clear()
+        security._login_fails.clear()
         settings.set("acesso_rede", True)
         settings.set_password("segredo2468")
         self.c = appmod.create_app(testing=True).test_client()
         self.remote = {"REMOTE_ADDR": "192.168.0.50"}
 
     def test_bloqueia_depois_de_cinco_erros(self):
-        for _ in range(appmod.MAX_TRIES - 1):
+        for _ in range(security.MAX_TRIES - 1):
             self.assertEqual(
                 self.c.post("/entrar", data={"senha": "errada0"}, environ_base=self.remote).status_code, 401
             )
@@ -503,7 +505,7 @@ class PinLimitTests(unittest.TestCase):
         self.assertEqual(self.c.get("/api/painel", environ_base=self.remote).status_code, 401)
 
     def test_outro_aparelho_nao_e_bloqueado(self):
-        for _ in range(appmod.MAX_TRIES):
+        for _ in range(security.MAX_TRIES):
             self.c.post("/entrar", data={"senha": "errada0"}, environ_base=self.remote)
         r = self.c.post(
             "/entrar", data={"senha": "segredo2468"}, environ_base={"REMOTE_ADDR": "192.168.0.51"}
@@ -512,16 +514,16 @@ class PinLimitTests(unittest.TestCase):
 
     def test_bloqueio_dobra_e_tem_teto(self):
         t = time.monotonic()
-        for _ in range(appmod.MAX_TRIES):
-            appmod.register_login("x", False, now=t)
-        self.assertEqual(appmod.login_blocked_for("x", now=t), 300)
-        appmod.register_login("x", False, now=t)
-        self.assertEqual(appmod.login_blocked_for("x", now=t), 600)
+        for _ in range(security.MAX_TRIES):
+            security.register_login("x", False, now=t)
+        self.assertEqual(security.login_blocked_for("x", now=t), 300)
+        security.register_login("x", False, now=t)
+        self.assertEqual(security.login_blocked_for("x", now=t), 600)
         for _ in range(10):
-            appmod.register_login("x", False, now=t)
-        self.assertEqual(appmod.login_blocked_for("x", now=t), 3600)
-        appmod.register_login("x", True, now=t)
-        self.assertEqual(appmod.login_blocked_for("x", now=t), 0)
+            security.register_login("x", False, now=t)
+        self.assertEqual(security.login_blocked_for("x", now=t), 3600)
+        security.register_login("x", True, now=t)
+        self.assertEqual(security.login_blocked_for("x", now=t), 0)
 
     def test_redirecionamento_seguro(self):
         r = self.c.post(

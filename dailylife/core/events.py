@@ -11,7 +11,7 @@ import sqlite3
 from datetime import datetime, timedelta
 
 from dailylife import config
-from dailylife.core import NotFound, ValidationError, as_bool, recurrence, require_text
+from dailylife.core import NotFound, ValidationError, as_bool, as_int, clean_text, recurrence, require_text
 from dailylife.core import calendars as cal_service
 from dailylife.db import get_conn, row, rows
 
@@ -115,7 +115,7 @@ def list_range(
     return out
 
 
-def _times(data: dict, cur: datetime, dia_inteiro: bool) -> tuple[str, str]:
+def _times(data: dict, cur: dict, dia_inteiro: bool) -> tuple[str, str]:
     try:
         inicio = config.parse_iso(data.get("inicio") or cur.get("serie_inicio") or "")
         fim = config.parse_iso(data.get("fim") or cur.get("serie_fim") or "")
@@ -134,7 +134,7 @@ def _times(data: dict, cur: datetime, dia_inteiro: bool) -> tuple[str, str]:
 def _validate(data: dict, conn: sqlite3.Connection, current: dict | None = None) -> dict:
     cur = current or {}
     out = {"titulo": require_text({**cur, **data}, "titulo", "O título", 200)}
-    cal_id = int(data.get("calendar_id") or cur.get("calendar_id") or 0)
+    cal_id = as_int(data.get("calendar_id") or cur.get("calendar_id") or 0, "Calendário")
     if not cal_id:
         raise ValidationError("Escolha um calendário.")
     cal = cal_service.get(cal_id, conn)
@@ -145,16 +145,16 @@ def _validate(data: dict, conn: sqlite3.Connection, current: dict | None = None)
     out["dia_inteiro"] = 1 if dia_inteiro else 0
     out["inicio"], out["fim"] = _times(data, cur, dia_inteiro)
     for k in ("local", "notas"):
-        out[k] = (data.get(k, cur.get(k)) or "").strip()[:2000]
+        out[k] = clean_text(data.get(k, cur.get(k)), "Local e notas", 2000)
     rep = data.get("repeticao", cur.get("repeticao", "")) or ""
-    if rep not in recurrence.EVENT_RULES:
+    if not isinstance(rep, str) or rep not in recurrence.EVENT_RULES:
         raise ValidationError("Repetição inválida.")
     out["repeticao"] = rep
     # Escolher uma repetição nossa substitui a regra personalizada do Google
     out["rrule"] = None if "repeticao" in data else cur.get("rrule")
     out["fuso"] = None if "repeticao" in data else cur.get("fuso")
     aviso = data.get("aviso_min", cur.get("aviso_min", 15))
-    aviso = None if aviso in (None, "", "null", "none") else int(aviso)
+    aviso = None if aviso in (None, "", "null", "none") else as_int(aviso, "Aviso")
     if aviso not in AVISOS:
         raise ValidationError("Aviso inválido.")
     out["aviso_min"] = aviso
@@ -280,6 +280,36 @@ def _upsert_override(
     return oid
 
 
+def _update_occurrence(conn: sqlite3.Connection, series: dict, data: dict, ocorrencia: str | None) -> dict:
+    """Altera "só este": grava a ocorrência como linha própria, ligada à série."""
+    if not ocorrencia:
+        raise ValidationError("Informe qual ocorrência alterar.")
+    occ_s, occ_f = _occurrence_times(series, ocorrencia)
+    base = {**series, "serie_inicio": config.iso(occ_s), "serie_fim": config.iso(occ_f)}
+    data = {k: v for k, v in data.items() if k not in ("repeticao", "calendar_id")}
+    f = _validate(data, conn, base)
+    f.pop("_origem")
+    fields = {c: f[c] for c in _COLS if c not in ("calendar_id", "repeticao", "rrule", "fuso")}
+    oid = _upsert_override(conn, series, config.iso(occ_s), fields)
+    return _with_conflicts(get(oid, conn), conn)
+
+
+def _move_out_of_google(conn: sqlite3.Connection, current: dict, data: dict, f: dict, stamp: str) -> dict:
+    """Saiu de um calendário do Google: apaga lá e cria uma cópia nova."""
+    conn.execute(
+        "UPDATE events SET excluido=1, pendente_sync=1, atualizado_em=?, rev=rev+1 WHERE id=?",
+        (stamp, current["id"]),
+    )
+    conn.execute("DELETE FROM events WHERE serie_id=?", (current["id"],))
+    conn.commit()
+    new = create({**current, **data, "inicio": f["inicio"], "fim": f["fim"]}, conn)
+    if f["rrule"]:  # mantém a regra personalizada do Google na cópia
+        conn.execute("UPDATE events SET rrule=?, fuso=? WHERE id=?", (f["rrule"], f["fuso"], new["id"]))
+        conn.commit()
+        new = _with_conflicts(get(new["id"], conn), conn)
+    return new
+
+
 def update(
     event_id: int,
     data: dict,
@@ -298,34 +328,13 @@ def update(
         data = {k: v for k, v in data.items() if k not in ("calendar_id", "repeticao")}
 
     if current["recorrente"] and escopo == "este":
-        if not ocorrencia:
-            raise ValidationError("Informe qual ocorrência alterar.")
-        occ_s, occ_f = _occurrence_times(current, ocorrencia)
-        base = {**current, "serie_inicio": config.iso(occ_s), "serie_fim": config.iso(occ_f)}
-        data = {k: v for k, v in data.items() if k not in ("repeticao", "calendar_id")}
-        f = _validate(data, conn, base)
-        f.pop("_origem")
-        fields = {c: f[c] for c in _COLS if c not in ("calendar_id", "repeticao", "rrule", "fuso")}
-        oid = _upsert_override(conn, current, config.iso(occ_s), fields)
-        return _with_conflicts(get(oid, conn), conn)
+        return _update_occurrence(conn, current, data, ocorrencia)
 
     f = _validate(data, conn, current)
     origem = f.pop("_origem")
     stamp = config.iso(config.now())
     if current["origem"] == "google" and f["calendar_id"] != current["calendar_id"]:
-        # Saiu de um calendário do Google: apaga lá e cria uma cópia nova
-        conn.execute(
-            "UPDATE events SET excluido=1, pendente_sync=1, atualizado_em=?, rev=rev+1 WHERE id=?",
-            (stamp, event_id),
-        )
-        conn.execute("DELETE FROM events WHERE serie_id=?", (event_id,))
-        conn.commit()
-        new = create({**current, **data, "inicio": f["inicio"], "fim": f["fim"]}, conn)
-        if f["rrule"]:  # mantém a regra personalizada do Google na cópia
-            conn.execute("UPDATE events SET rrule=?, fuso=? WHERE id=?", (f["rrule"], f["fuso"], new["id"]))
-            conn.commit()
-            new = _with_conflicts(get(new["id"], conn), conn)
-        return new
+        return _move_out_of_google(conn, current, data, f, stamp)
     if current["alterada"]:
         f["repeticao"], f["rrule"], f["fuso"] = "", None, None
         f["calendar_id"] = current["calendar_id"]

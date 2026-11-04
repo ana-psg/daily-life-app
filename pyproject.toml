@@ -20,10 +20,14 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["E402", "E501", "B017", "SIM117", "RUF015", "ANN"]
-"tools/*" = ["ANN"]
-"dailylife/web/*" = ["ANN201", "ANN202"]
-"dailylife/tailscale.py" = ["SIM112"]  # rotas do Flask devolvem respostas do Flask
-"dailylife/desktop/app.py" = ["E402", "SIM112", "SIM115"]  # nomes de variáveis do Windows; stdout do pythonw
+"tools/*" = ["ANN", "SIM112"]
+"dailylife/web/*" = ["ANN201", "ANN202"]  # rotas do Flask devolvem respostas do Flask
+"dailylife/tailscale.py" = ["SIM112"]  # nomes de variáveis do Windows
+"dailylife/desktop/windows.py" = ["SIM112"]  # nomes de variáveis do Windows
+"dailylife/desktop/app.py" = ["E402", "SIM115"]  # imports depois de ajustar o caminho; stdout do pythonw
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["dailylife"]

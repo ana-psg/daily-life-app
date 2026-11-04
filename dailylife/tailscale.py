@@ -12,6 +12,7 @@ import os
 import re
 import shutil
 import subprocess
+from urllib.parse import urlsplit
 
 from dailylife import config
 
@@ -61,12 +62,10 @@ def _run(*args: str, timeout: int = TIMEOUT) -> tuple[int, str]:
 
 def _serving(serve_status: dict) -> bool:
     """O `tailscale serve` já está repassando para a porta do app?"""
-    target = f"127.0.0.1:{config.PORT}"
     for site in (serve_status.get("Web") or {}).values():
         for handler in (site.get("Handlers") or {}).values():
-            if target in str(handler.get("Proxy", "")) or f"localhost:{config.PORT}" in str(
-                handler.get("Proxy", "")
-            ):
+            target = urlsplit(str(handler.get("Proxy", "")))
+            if target.hostname in ("127.0.0.1", "localhost") and target.port == config.PORT:
                 return True
     return False
 
@@ -117,7 +116,6 @@ def publish() -> dict:
 
 
 def unpublish() -> dict:
+    """Desliga só o endereço deste app; `serve reset` derrubaria os outros apps do PC."""
     code, text = _run("serve", "--https=443", "off")
-    if code != 0:
-        code, text = _run("serve", "reset")
     return {"ok": code == 0, "mensagem": "" if code == 0 else text.strip()[:300]}

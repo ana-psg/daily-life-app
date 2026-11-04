@@ -1,6 +1,6 @@
 """Daily Life: abre o app no Windows (janelas, bandeja, avisos).
 
-Uso: DailyLife.bat (ou: python main.py)
+Uso, pelo código: python main.py
 """
 
 from dailylife.desktop.app import main

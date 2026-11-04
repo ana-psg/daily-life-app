@@ -51,7 +51,7 @@
       html =
         '<div class="banner warn">Faltam as bibliotecas do Google. No terminal da pasta do app rode: <code>pip install -r requirements.txt</code></div>';
     } else if (!g.credenciais) {
-      html = `<p class="note">Para conectar, crie as credenciais no Google Cloud e salve o arquivo <code>credentials.json</code> na pasta do Daily Life. O passo a passo está no README, na seção "Google Agenda".</p>`;
+      html = `<p class="note">Para conectar, crie as credenciais no Google Cloud e salve o arquivo <code>credentials.json</code> em <code>${esc(g.pasta_credenciais)}</code>. O passo a passo está no Manual do Daily Life, na seção "Google Agenda".</p>`;
     } else if (g.conectando) {
       html = '<div class="banner">Abri o navegador. Entre na sua conta Google e autorize o Daily Life…</div>';
       gPoll = setTimeout(() => google().catch(() => {}), 2000);
@@ -61,7 +61,7 @@
     } else {
       html = `<div class="set-row"><div class="lbl"><b>${esc(g.conta || 'Conta conectada')}</b>
           <small>${g.sincronizando ? 'Sincronizando…' : g.ultima_sync ? 'Sincronizado às ' + hm(g.ultima_sync) : 'Ainda não sincronizado'}${g.pendentes ? ` · ${g.pendentes} alteração(ões) para enviar` : ''}</small></div>
-        <div style="display:flex;gap:8px"><button class="btn soft sm" type="button" id="g-sync">Sincronizar agora</button>
+        <div class="hrow"><button class="btn soft sm" type="button" id="g-sync">Sincronizar agora</button>
         <button class="btn ghost sm" type="button" id="g-off">Desconectar</button></div></div>`;
       if (g.sincronizando) gPoll = setTimeout(() => google().catch(() => {}), 2000);
     }
@@ -116,10 +116,10 @@
         ${
           c.origem === 'local'
             ? `<label class="sr-only" for="cc-${c.id}">Cor de ${esc(c.nome)}</label><input type="color" id="cc-${c.id}" value="${esc(c.cor)}" data-color>`
-            : `<span class="dot" style="--c:${esc(c.cor)};width:14px;height:14px;margin:0 9px"></span>`
+            : `<span class="dot lg" style="--c:${esc(c.cor)}"></span>`
         }
         <span class="nm" title="${esc(c.nome)}">${esc(c.nome)}</span>
-        <span class="muted" style="font-size:11px;font-weight:700">${c.origem === 'google' ? (c.somente_leitura ? 'Google · leitura' : 'Google') : 'Local'}</span>
+        <span class="muted fs-11 fw-700">${c.origem === 'google' ? (c.somente_leitura ? 'Google · leitura' : 'Google') : 'Local'}</span>
         <button type="button" class="round plain" data-vis="${c.visivel}" aria-label="${c.visivel ? 'Esconder' : 'Mostrar'} ${esc(c.nome)}" title="${c.visivel ? 'Esconder' : 'Mostrar'}">${c.visivel ? icon('eye', 16) : icon('eye-off', 16)}</button>
         ${c.origem === 'local' ? `<button type="button" class="round plain" data-del aria-label="Apagar ${esc(c.nome)}" title="Apagar">${icon('trash', 15)}</button>` : ''}
       </div>`,
@@ -179,7 +179,7 @@
     }
     const devices = c.push.aparelhos;
     const pushNote = !c.push.disponivel
-      ? '<div class="banner warn">Avisos no celular precisam da biblioteca cryptography. Rode o instalar.bat de novo.</div>'
+      ? '<div class="banner warn">Avisos no celular precisam da biblioteca cryptography. Reinstale o Daily Life.</div>'
       : devices
         ? `<div class="hrow center wrap-row"><span class="note">${devices} ${devices === 1 ? 'aparelho recebe' : 'aparelhos recebem'} avisos.</span>
             <button class="btn ghost sm" type="button" data-cel="teste">Enviar aviso de teste</button></div>`

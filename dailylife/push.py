@@ -124,9 +124,14 @@ def subscribe(sub: dict, aparelho: str = "", conn: sqlite3.Connection | None = N
     from dailylife.core import ValidationError
 
     conn = conn or get_conn()
-    keys = sub.get("keys") or {}
-    endpoint = str(sub.get("endpoint") or "")
-    if not endpoint.startswith("https://") or not keys.get("p256dh") or not keys.get("auth"):
+    keys = sub.get("keys") if isinstance(sub, dict) else None
+    endpoint = str(sub.get("endpoint") or "") if isinstance(sub, dict) else ""
+    if (
+        not endpoint.startswith("https://")
+        or not isinstance(keys, dict)
+        or not keys.get("p256dh")
+        or not keys.get("auth")
+    ):
         raise ValidationError("Inscrição de avisos inválida.")
     try:
         if len(unb64(keys["p256dh"])) != 65 or len(unb64(keys["auth"])) != 16:

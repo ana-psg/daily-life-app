@@ -2,7 +2,8 @@
 'use strict';
 
 (() => {
-  const HOUR = 44;
+  // Altura de uma hora: vem do token --hour do CSS (tokens.css), para os dois nunca ficarem diferentes
+  const HOUR = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hour')) || 44;
   const { esc, parse, isoDate, addDays, pad } = DA;
 
   // Distribui eventos que se sobrepõem em colunas lado a lado
@@ -83,7 +84,7 @@
       '</div>';
     if (hasAllday) {
       html +=
-        '<div class="tl-allday"><div class="muted" style="font-size:11px;font-weight:600">dia todo</div>' +
+        '<div class="tl-allday"><div class="muted fs-11 fw-600">dia todo</div>' +
         byDay
           .map(
             (d) =>
