@@ -83,9 +83,11 @@ def _hhmm(value: Any, label: str) -> str:
     value = str(value or "").strip()
     try:
         h, m = (int(x) for x in value.split(":"))
-        assert 0 <= h < 24 and 0 <= m < 60
-    except Exception:
+    except ValueError:
         raise ValidationError(f"{label}: use o formato HH:MM.") from None
+    # if em vez de assert: assert some quando o Python roda otimizado (-O)
+    if not (0 <= h < 24 and 0 <= m < 60):
+        raise ValidationError(f"{label}: use o formato HH:MM.")
     return f"{h:02d}:{m:02d}"
 
 

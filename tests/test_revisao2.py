@@ -312,3 +312,36 @@ class HostTests(unittest.TestCase):  # item 13
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RevisaoNovembroTests(unittest.TestCase):
+    """Revisão de 04/11/2026."""
+
+    def setUp(self):
+        reset()
+
+    def test_horario_fora_do_relogio_e_recusado(self):
+        for valor in ("24:00", "12:60", "-1:30", "99:99"):
+            with self.assertRaises(ValidationError, msg=valor):
+                settings._hhmm(valor, "Silêncio")
+        self.assertEqual(settings._hhmm("7:05", "Silêncio"), "07:05")
+
+    def test_sincronizacao_com_erro_libera_a_proxima(self):
+        old = (google_sync.sync_all, google_sync.is_connected)
+
+        def falha():
+            raise RuntimeError("sem internet")
+
+        google_sync.sync_all = falha
+        google_sync.is_connected = lambda: True
+        try:
+            s = Scheduler()
+            s.sync(force=True)
+            s._sync_thread.join(3)
+            calls = []
+            google_sync.sync_all = lambda: calls.append(1)
+            s.sync(force=True)
+            s._sync_thread.join(3)
+        finally:
+            google_sync.sync_all, google_sync.is_connected = old
+        self.assertEqual(calls, [1])

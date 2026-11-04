@@ -26,7 +26,9 @@ class Scheduler(threading.Thread):
         self._sync_now = threading.Event()
         self._first = True
         self._last_sync = 0.0
-        self._sync_thread = None
+        self._sync_thread: threading.Thread | None = None
+        self._sync_lock = threading.Lock()  # protege _sync_running e _sync_again
+        self._sync_running = False
         self._sync_again = False
 
     def stop(self) -> None:
@@ -111,10 +113,12 @@ class Scheduler(threading.Thread):
             return
         minutes = settings.get("sync_min") or 5
         if force or time.monotonic() - self._last_sync >= minutes * 60 or self._last_sync == 0:
-            if self._sync_thread and self._sync_thread.is_alive():
-                if force:
-                    self._sync_again = True  # roda de novo assim que a atual terminar
-                return
+            with self._sync_lock:
+                if self._sync_running:
+                    if force:
+                        self._sync_again = True  # roda de novo assim que a atual terminar
+                    return
+                self._sync_running = True
             self._last_sync = time.monotonic()
             # Em outra thread: uma conexão lenta com o Google não atrasa os lembretes
             self._sync_thread = threading.Thread(target=self._run_sync, daemon=True, name="google-sync")
@@ -122,10 +126,20 @@ class Scheduler(threading.Thread):
 
     def _run_sync(self) -> None:
         try:
-            google_sync.sync_all()
-            while self._sync_again:
-                self._sync_again = False
+            while True:
                 google_sync.sync_all()
+                # olhar e zerar o pedido junto com o fim da rodada: um pedido que chega
+                # bem no fim nunca se perde (ou roda aqui, ou abre uma rodada nova)
+                with self._sync_lock:
+                    if not self._sync_again:
+                        self._sync_running = False
+                        return
+                    self._sync_again = False
+        except Exception:
+            log.exception("falha ao sincronizar com o Google")
+            with self._sync_lock:
+                self._sync_running = False
+                self._sync_again = False
         finally:
             db.close_conn()
 

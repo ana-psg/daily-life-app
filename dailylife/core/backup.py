@@ -140,6 +140,7 @@ def import_data(data: dict, conn: sqlite3.Connection | None = None) -> dict[str,
         _upgrade_old_export(data)
     _validate_import(data)
     make_backup(conn, force=True, motivo="antes-de-importar")
+    conn.commit()  # PRAGMA foreign_keys não faz nada dentro de uma transação aberta
     try:
         conn.execute("PRAGMA foreign_keys = OFF")
         conn.execute("BEGIN")

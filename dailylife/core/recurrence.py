@@ -47,6 +47,7 @@ def zone(name: str) -> tzinfo:
     try:
         return ZoneInfo(name)
     except Exception:
+        log.warning("fuso desconhecido %r: usando o de São Paulo", name)
         return config.TZ
 
 
