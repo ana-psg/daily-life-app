@@ -13,7 +13,7 @@ Feito com Python: Flask (telas e API) + pywebview (janela) + SQLite (dados no se
 
 ## 1. Instalar
 
-1. Baixe e abra **`DailyLife-Setup-2.0.0.exe`**. Não precisa de administrador nem de Python.
+1. Baixe **[DailyLife-Setup.exe](https://github.com/ana-psg/daily-life-app/releases/latest/download/DailyLife-Setup.exe)** (só esse arquivo, sempre a versão mais nova) e abra. Não precisa de administrador nem de Python. As versões anteriores ficam em [Releases](https://github.com/ana-psg/daily-life-app/releases).
 2. O Windows pode avisar "editor desconhecido" (o programa não tem assinatura digital paga): clique em **Mais informações > Executar assim mesmo**. Veja a seção 9.
 3. Escolha se quer atalho na Área de Trabalho e **Abrir ao iniciar o Windows**.
 
